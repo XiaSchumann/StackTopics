@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<project default="jar">
+
+    <property name="src"         location="./src" />
+    <property name="lib"         location="./lib"/>
+    <property name="build"       location="./build"/>
+    <property name="dist"        location="./dist"/>
+    <property name="jar"         location="${dist}/stacktopics.jar"/>
+
+    <!-- All targets -->
+    <target name="all" depends="clean,jar"/>
+
+    <!-- Delete the compiled code directories -->
+    <target name="clean">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+
+    <!-- Target to create the temporary directories -->
+    <target name="init">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
+
+    <!-- Compile the code -->
+    <target name="compile" depends="init">
+        <echo message="Compiling java:"/>
+        <javac srcdir="${src}" destdir="${build}" debug="on" includeantruntime="false">
+        </javac>
+    </target>
+
+
+    <!-- Make the jar. Don't include all the 3rd party jars into the jar;
+         instead, dynamically build the classpath (with the manifestclasspath
+         task) and adjust the jar's manifest accordingly. -->
+    <target name="jar" depends="compile">
+        <jar jarfile="${jar}" basedir="${build}">
+            <manifest>
+                <attribute name="Main-Class" value="com.swtanalytics.stacktopics.EasyMain"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+    <!-- Run the tests, i.e., all files that end in *Test.java.
+         NOTE: the "test-coverage" task below is a copy-and-paste of this task,
+         only with a few additional items. So if you change this task, be sure
+         to update the "test-coverage" task, too. -->
+    <target name="test" depends="clean,jar">
+        <junit showoutput="true" haltonfailure="true" fork="true">
+            <classpath >
+                <fileset dir="${dist}">
+                    <include name="**/*.jar" />
+                </fileset>
+            </classpath>
+
+            <formatter type="brief" usefile="false"/>
+            <batchtest failureproperty="failed" >
+                <fileset dir="${src}">
+                    <include name="**/*Test.java" />
+                </fileset>
+            </batchtest>
+        </junit>
+        <echo message="All Tests Passed!" />
+    </target>
+
+
+</project>

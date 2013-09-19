@@ -1,0 +1,9 @@
+*.class
+
+
+# Temporary dirs #
+.classpath
+.project
+bin
+build
+dist
