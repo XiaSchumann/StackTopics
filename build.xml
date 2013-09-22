@@ -7,6 +7,10 @@
     <property name="dist"        location="./dist"/>
     <property name="jar"         location="${dist}/stacktopics.jar"/>
 
+    <path id="classpath">
+        <fileset dir="${lib}" includes="**/*.jar"/>
+    </path>
+
     <!-- All targets -->
     <target name="all" depends="clean,jar"/>
 
@@ -26,7 +30,7 @@
     <!-- Compile the code -->
     <target name="compile" depends="init">
         <echo message="Compiling java:"/>
-        <javac srcdir="${src}" destdir="${build}" debug="on" includeantruntime="false">
+        <javac srcdir="${src}" destdir="${build}" debug="on" includeantruntime="false" classpathref="classpath">
         </javac>
     </target>
 
