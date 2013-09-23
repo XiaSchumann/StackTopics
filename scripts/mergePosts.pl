@@ -4,28 +4,25 @@ use XML::Twig;
 use File::Slurp;
 
 if (@ARGV != 2){
-    print "Usage: $0 origPosts pre_dir \n";
+    print "Usage: $0 csv pre_dir \n";
     exit;
 }
 my $file     = shift;
 my $predir   = shift;
 
+my $d = '|';
 
-my $t=XML::Twig->new(pretty_print => 'indented');
-$t->parsefile($file); 
+open (IN, "<", $file) or die();
 
-my $root= $t->root;
-
-my @posts = $root->children('row');   # get the para children
-foreach my $post (@posts){ 
-    my $id   = $post->{'att'}->{'Id'}; 
-    my $body = $post->{'att'}->{'Body'}; 
-    #print "ID: $id\n";
-    #print "Body: $body\n";
+while (<IN>){
+    chomp;
+    my @c = split /\|/;
+    my $id   = $c[0];
     my $text = read_file( "$predir/$id" ) ;
-    $text =~ s/\n/ /g;
-    $post->set_att(BodyPre => $text);
+    chomp $text;
+    print "$_$text$d\n";
 }
 
-$t->print;
+
+
 

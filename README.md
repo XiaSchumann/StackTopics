@@ -18,50 +18,61 @@ Still under early development.
 Usage
 =====
 
-#### Load a directory of XML datafiles (one file per post)
+# Create a CSV file from the XML file:
 
 ```
-java -jar dist/stackanaly.jar com.swtanalytics.stackanaly.main.LoadDirectory DIR_NAME
+../../StackTopics/scripts/xml2CSV.pl posts.xml posts.csv
 ```
 
-
-#### Preprocess the posts
-
-```
-java -jar dist/stackanaly.jar com.swtanalytics.stackanaly.main.PreProcess 
-```
-
-(Note: this is not yet implemented. lcsp must first be ported to a Java library.)
-
-For now, it is assumed that the posts have already been preprocessed when they
-are loaded. To do so:
+Preprocess the posts using the lcsp Perl module:
 
 ```
-./scripts/stripPosts.pl posts.xml raw
-./scripts/preprocessPosts.pl raw pre
-./scripts/mergePosts.pl posts.xml pre > posts-pre.xml
+../../StackTopics/scripts/stripBody.pl posts.xml raw
+../../StackTopics/scripts/preprocessPosts.pl # assumes "raw" input, "pre" output
 ```
 
-The above methodology depends on the lcsp Perl module.
-
-
-#### Run LDA on the posts
+Add the preprocessed posts into the CSV:
 
 ```
-java -jar dist/stackanaly.jar com.swtanalytics.stackanaly.main.RunLDA 
+../../StackTopics/scripts/mergePosts.pl posts.csv pre > posts-pre.csv
 ```
 
 
-#### View LDA output
+#### Run LDA on the posts using MALLET
 
-TODO
+```
+../mallet-2.0.7/bin/mallet import-dir --input pre --output pre.mallet --keep-sequence
+bin/mallet train-topics --config train-topics.config
+```
+
+
+# TODO: Reformat LDA output and load into DB
+
+
+
+#### Loading the data
+
+Create the DB named so:
+
+```
+mysqladmin -u root create so
+```
+
+Use a script to define the schema
+
+```
+mysql -u root --local-infile=1 so
+``` 
+
+Then see `sql/` directory.
+
+
 
 
 
 Design
 ======
 
-StackTopics is implemented in Java, using Hibernate to persist data to disk.
 
 
 

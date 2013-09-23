@@ -19,5 +19,6 @@ $preprocessor->setOption("doRemoveURLs", 1);
 $preprocessor->setOption("doRemoveCodeTags", 1);
 $preprocessor->setOption("doRemoveHTMLTags", 1);
 $preprocessor->setOption("doExpandContractions", 1);
+$preprocessor->setOption("doOutputOneWordPerLine", 0);
 
 $preprocessor->preprocess();
