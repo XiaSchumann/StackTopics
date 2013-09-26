@@ -1,0 +1,122 @@
+
+###########################################################################
+## Define metrics
+###########################################################################
+
+INSERT INTO METRICS VALUES 
+(1, "Share", "The proportion of posts that contain the topic.");
+
+INSERT INTO METRICS VALUES 
+(2, "Impact", "The proportion of posts that contain the topic in a given month.");
+
+
+
+###########################################################################
+## Setup helper tables and stuff
+###########################################################################
+
+INSERT INTO MONTHS
+(
+    `YEAR`, `MONTH`, `POST_COUNT`
+)
+SELECT
+    YEAR(DATE) as YEAR,
+    MONTH(DATE) as MONTH,
+    COUNT(*) as POST_COUNT
+FROM POSTS 
+GROUP BY YEAR(DATE), MONTH(DATE);
+
+SELECT SUM(m.POST_COUNT) FROM MONTHS m INTO @NUM_POSTS;
+
+
+
+###########################################################################
+## TODO: Tag Growth
+###########################################################################
+
+
+select distinct(p.DATE)
+from THETA t  INNER JOIN POSTS p
+WHERE t.TOPIC_ID=39 and t.POST_ID=p.ID and p.DATE > "2009-02-01"
+ORDER BY p.DATE;
+
+SELECT  COUNT(ID) as NumPosts, DATE as Month
+FROM    POSTS
+GROUP BY YEAR(DATE), MONTH(DATE);
+
+
+SELECT COUNT(POSTS.ID), THETA.TOPIC_ID as TopicID, POSTS.DATE as Date, SUM(THETA.WEIGHT)  as Value
+FROM POSTS INNER JOIN THETA
+WHERE THETA.POST_ID=POSTS.ID
+GROUP BY TopicID, YEAR(POSTS.DATE), MONTH(POSTS.DATE);
+
+
+
+
+###########################################################################
+## Topic metrics
+###########################################################################
+
+
+## Topic share:
+
+INSERT INTO TOPICMETRICS
+(
+    `TOPIC_ID`, `METRIC_ID`, `DATE`, `VALUE`
+)
+SELECT 
+    t.TOPIC_ID as TopicID, 
+    1 as MetricID, 
+    "0000-00-00" as Date, 
+    SUM(t.WEIGHT)/@NUM_POSTS as Value
+FROM POSTS p
+JOIN THETA t
+    ON t.POST_ID = p.ID
+GROUP BY TopicID;
+
+
+
+## Topic impact:
+
+INSERT INTO TOPICMETRICS
+(
+    `TOPIC_ID`, `METRIC_ID`, `DATE`, `VALUE`
+)
+SELECT t.TOPIC_ID as TopicID, 2 as MetricID, MIN(p.DATE) as Date, SUM(t.WEIGHT)/m.POST_COUNT as
+Value
+FROM POSTS p
+JOIN THETA t
+  ON t.POST_ID = p.ID
+JOIN MONTHS m
+  ON    YEAR(p.DATE) = m.YEAR
+    AND MONTH(p.DATE) = m.MONTH
+GROUP BY TopicID, YEAR(p.DATE), MONTH(p.DATE);
+
+
+
+      
+
+
+## TODO:
+SELECT * FROM POSTS WHERE P_ORIGTEXT LIKE "%telerik%";
+
+
+
+## TODO: How to find out what posts a topic has, in order
+
+
+## TODO: How to find out what posts a post has, in order
+
+
+
+
+###########################################################################
+## Output files so that R can use them
+###########################################################################
+
+SELECT  COUNT(ID) as NumPosts, DATE  Month, POSTTYPE as Type 
+FROM    POSTS
+GROUP BY YEAR(DATE), MONTH(DATE), Type
+INTO OUTFILE '/tmp/out.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';

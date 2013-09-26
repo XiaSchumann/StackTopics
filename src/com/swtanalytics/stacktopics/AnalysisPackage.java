@@ -1,5 +1,9 @@
 package com.swtanalytics.stacktopics;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 import cc.mallet.pipe.CharSequence2TokenSequence;
@@ -38,10 +42,6 @@ public class AnalysisPackage {
 	
 	
 	public void buildInstanceList(){
-        // Build a new pipe
-		
-		//String[] s = {"this is string 1", "this is string 2", "the third string. let's go to town."};
-
         // Create a list of pipes that will be added to a SerialPipes object later
         ArrayList<Pipe> pipeList = new ArrayList<Pipe>();
 
@@ -54,23 +54,21 @@ public class AnalysisPackage {
         Pipe instancePipe = new SerialPipes(pipeList);
         this.instances = new InstanceList (instancePipe);
         
-        //instances.addThruPipe(new StringArrayIterator(s));
-               
-        
         ArrayList<Instance> ai = new ArrayList<Instance>();
         for(Post p: posts){
-//        	String[] tmp = {p.preprocessedText};
         	Instance i = new Instance(p.preprocessedText, null, p.id, null);
+        	i.setSource(p.id);
         	ai.add(i);
         }
         this.instances.addThruPipe(ai.iterator());
         
-        for (int i=0; i< this.instances.size(); ++i){
-        	System.out.printf("\nName: %s\n", this.instances.get(i).getName());
-        	System.out.printf("Label: %s\n", this.instances.get(i).getLabeling());
-        	System.out.printf("Data: %s", this.instances.get(i).getData());
-        	System.out.printf("Source: %s\n", this.instances.get(i).getSource());
-        }
+        // DEBUG OUTPUT
+        //for (int i=0; i< this.instances.size(); ++i){
+        //	System.out.printf("\nName: %s\n", this.instances.get(i).getName());
+        //	System.out.printf("Label: %s\n", this.instances.get(i).getLabeling());
+        //	System.out.printf("Data: %s", this.instances.get(i).getData());
+        //	System.out.printf("Source: %s\n", this.instances.get(i).getSource());
+        //}
 	}
 	
 	
@@ -78,6 +76,18 @@ public class AnalysisPackage {
         
 		TopicalNGrams tng = new TopicalNGrams(numTopics, alphaSum, beta, gamma, delta, delta1, delta2);
         tng.estimate(instances, iterations, showTopicsInterval, iterations, outputModelFilename, r);
+        
+        //tng.docTopicCounts[0][0];
+        
+        
+        tng.printTopWords(10, true);
+        try {
+			tng.printDocumentTopics(new PrintWriter( new FileWriter (new File("dt.dat"))), 0.1, numTopics);
+			tng.printState(new File("soda.out"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 

@@ -49,7 +49,8 @@ public class EasyMain {
 	    	SAXParserFactory factory = SAXParserFactory.newInstance();
 	    	SAXParser saxParser = factory.newSAXParser();
 	    	XMLHandler handler = new XMLHandler();
-	    	saxParser.parse("../tmp.xml", handler);
+	    	saxParser.parse("../SO/June2010/"
+	    			+ "tmp.xml", handler);
 	    	a.posts = handler.posts;
     	} catch (Exception e){
     		e.printStackTrace();

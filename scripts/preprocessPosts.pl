@@ -2,11 +2,19 @@
 use strict;
 use lscp;
 
+
+if (@ARGV != 2){
+    print "Usage: $0 raw_dir pre_dir \n";
+    exit;
+}
+my $rawDir   = shift;
+my $preDir   = shift;
+
 my $preprocessor = lscp->new;
 
 $preprocessor->setOption("logLevel", "error");
-$preprocessor->setOption("inPath", "raw");
-$preprocessor->setOption("outPath", "pre");
+$preprocessor->setOption("inPath", $rawDir);
+$preprocessor->setOption("outPath", $preDir);
 $preprocessor->setOption("isCode", 0);
 $preprocessor->setOption("doTokenize", 0);
 $preprocessor->setOption("doStemming", 1);
