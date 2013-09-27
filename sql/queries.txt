@@ -31,25 +31,57 @@ SELECT SUM(m.POST_COUNT) FROM MONTHS m INTO @NUM_POSTS;
 
 
 ###########################################################################
-## TODO: Tag Growth
+## Tag Analysis
 ###########################################################################
 
 
-select distinct(p.DATE)
-from THETA t  INNER JOIN POSTS p
-WHERE t.TOPIC_ID=39 and t.POST_ID=p.ID and p.DATE > "2009-02-01"
-ORDER BY p.DATE;
+## New (unique) tags per month
+# First, find the first month for each tag...
 
-SELECT  COUNT(ID) as NumPosts, DATE as Month
-FROM    POSTS
-GROUP BY YEAR(DATE), MONTH(DATE);
+INSERT INTO DATEOFTAGSFIRSTAPPEARANCE (
+    `TAG_ID`, `DATE`
+)
+SELECT 
+    t.ID as TagID, 
+    MIN(p.DATE) as FirstDate
+FROM POSTS_TAGS pt
+JOIN POSTS p
+    ON p.ID = pt.POST_ID
+JOIN TAGS t
+    ON t.ID = pt.TAG_ID
+GROUP BY TagID;
 
 
-SELECT COUNT(POSTS.ID), THETA.TOPIC_ID as TopicID, POSTS.DATE as Date, SUM(THETA.WEIGHT)  as Value
-FROM POSTS INNER JOIN THETA
-WHERE THETA.POST_ID=POSTS.ID
-GROUP BY TopicID, YEAR(POSTS.DATE), MONTH(POSTS.DATE);
+# ... then, count IDs per date
 
+SELECT
+    COUNT(TAG_ID) as NewTagCount,
+    YEAR(DATE) as YEAR,
+    MONTH(DATE) as MONTH
+FROM DATEOFTAGSFIRSTAPPEARANCE 
+GROUP BY YEAR(DATE), MONTH(DATE)
+INTO OUTFILE '/tmp/newtagcount.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+
+
+
+## Total tag count in desc order
+
+SELECT 
+    COUNT(pt.TAG_ID) as TagCount,
+    t.LABEL as TagLabel 
+FROM POSTS_TAGS pt
+JOIN POSTS p
+    ON p.ID = pt.POST_ID
+JOIN TAGS t
+    ON t.ID = pt.TAG_ID
+GROUP BY pt.TAG_ID
+ORDER BY TagCount
+INTO OUTFILE '/tmp/totaltagcount.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
 
 
 
@@ -94,11 +126,10 @@ GROUP BY TopicID, YEAR(p.DATE), MONTH(p.DATE);
 
 
 
-      
 
 
 ## TODO:
-SELECT * FROM POSTS WHERE P_ORIGTEXT LIKE "%telerik%";
+# SELECT * FROM POSTS WHERE P_ORIGTEXT LIKE "%telerik%";
 
 
 
@@ -106,7 +137,6 @@ SELECT * FROM POSTS WHERE P_ORIGTEXT LIKE "%telerik%";
 
 
 ## TODO: How to find out what posts a post has, in order
-
 
 
 

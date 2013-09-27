@@ -36,7 +36,7 @@ Assumptions:
 # Create a CSV file from the XML file (tags):
 
 ```
-./scripts/xml2CSVTags.pl ../SO/June2010/med/posts.xml ../SO/June2010/med/tags.csv ../SO/June2010/med/posts_tags.csv
+./scripts/xml2CSVTags.pl ../SO/June2010/med/posts.xml ../SO/June2010/med/posts_tags.csv ../SO/June2010/med/tags.csv
 ```
 (On 500K rows: 60s)
 
