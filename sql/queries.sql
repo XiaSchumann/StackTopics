@@ -1,3 +1,8 @@
+###########################################################################
+# SWT Analytics
+# 2013
+###########################################################################
+
 
 ###########################################################################
 ## Define metrics
@@ -10,6 +15,48 @@ INSERT INTO METRICS VALUES
 (2, "Impact", "The proportion of posts that contain the topic in a given month.");
 
 
+###########################################################################
+## Define technologies
+###########################################################################
+
+INSERT INTO TECHNOLOGIES (GROUP_ID, LABEL) VALUES 
+(1, "c#-learning"), 
+(1, "c++-learning"),
+(1, "java-learning"),
+(1, "python-learning"),
+(1, "php-learning"),
+(1, "javascript-learning"),
+
+(2, "oracle"), 
+(2, "mysql"), 
+(2, "sql-server"), 
+(2, "sqlite"), 
+(2, "postgresql"), 
+
+(3, "git"), 
+(3, "svn"), 
+
+(4, "android"), 
+(4, "iphone"), 
+(4, "blackberry"), 
+(4, "windows-phone"), 
+
+(5, "php-scripting"), 
+(5, "python-scripting"), 
+(5, "perl-scripting"), 
+(5, "javascript-scripting"), 
+(5, "bash-scripting"), 
+
+(6, "javascript-web"), 
+(6, "asp.net-web"), 
+(6, "php-web"), 
+(6, "jquery-web"), 
+
+(7, "eclipse"), 
+(7, "netbeans"); 
+
+
+CALL addAssociation("c#-learning", "c#4.0")
 
 ###########################################################################
 ## Setup helper tables and stuff
@@ -66,7 +113,6 @@ LINES TERMINATED BY '\n';
 
 
 
-
 ## Total tag count in desc order
 
 SELECT 
@@ -78,7 +124,7 @@ JOIN POSTS p
 JOIN TAGS t
     ON t.ID = pt.TAG_ID
 GROUP BY pt.TAG_ID
-ORDER BY TagCount
+ORDER BY TagCount DESC
 INTO OUTFILE '/tmp/totaltagcount.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -126,15 +172,49 @@ GROUP BY TopicID, YEAR(p.DATE), MONTH(p.DATE);
 
 
 
+## Tag score:
 
+# For each combination of topic and tag, find all posts that both
+# contain that topic and tag, and compute the the sum and avg of the weights
+# that those posts have in that topic
+
+SELECT 
+    th.TOPIC_ID as TopicID,
+    t.LABEL as TagLabel,
+    pt.TAG_ID as TagID,
+    COUNT(pt.POST_ID) as PostCount,
+    SUM(th.WEIGHT) as WeightSum,
+    AVG(th.WEIGHT) as WeightAvg
+FROM POSTS_TAGS pt
+JOIN POSTS p
+    ON p.ID = pt.POST_ID
+JOIN TAGS t
+    ON t.ID = pt.TAG_ID
+JOIN THETA th
+    on th.POST_ID = pt.POST_ID
+GROUP BY th.TOPIC_ID, pt.TAG_ID
+ORDER BY th.TOPIC_ID, WeightSum DESC, pt.TAG_ID
+INTO OUTFILE '/tmp/tagscore.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+
+
+## Technical Impact
+
+# TODO
+
+
+
+
+
+###########################################################################
+###########################################################################
 
 ## TODO:
 # SELECT * FROM POSTS WHERE P_ORIGTEXT LIKE "%telerik%";
 
-
-
 ## TODO: How to find out what posts a topic has, in order
-
 
 ## TODO: How to find out what posts a post has, in order
 

@@ -114,8 +114,12 @@ Fire up the mysql command line:
 mysql -u root --local-infile=1 so
 ``` 
 
-Then see `sql/` directory.
+Load the schema from `sql/schema.ddl`.
 
+Then, in a seperate window, run the Perl script `sql/insertTechnologies.pl` to add all the technology-tag
+relationships.
+
+Then, run the queries from `sql/queries.sql`.
 
 
 
