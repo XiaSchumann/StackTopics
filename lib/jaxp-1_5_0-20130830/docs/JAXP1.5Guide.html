@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+            <title>JAXP 1.5 Documentation, Guide </title>
+    
+</head>
+    
+<body>
+
+
+<div>
+    <h2>JAXP 1.5 and New Properties</h2>
+<ul>
+    <li><a href='#JAXP1.5Documentation%2CGuide-1.Background'>1. Background</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-2.ExternalResources'>2. External Resources</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.NewProperties'>3. New Properties</a></li>
+<ul>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.1%7B%7BACCESSEXTERNALDTD%7D%7D'>3.1 <tt>ACCESS_EXTERNAL_DTD</tt></a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.2%7B%7BACCESSEXTERNALSCHEMA%7D%7D'>3.2 <tt>ACCESS_EXTERNAL_SCHEMA</tt></a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.3%7B%7BACCESSEXTERNALSTYLESHEET%7D%7D'>3.3 <tt>ACCESS_EXTERNAL_STYLESHEET</tt></a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.4.%5C%2Flib%2Fjaxp.properties'>3.4. {$java.home}/lib/jaxp.properties</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-3.5.Valuesoftheproperties'>3.5. Values of the properties</a></li>
+</ul>
+    <li><a href='#JAXP1.5Documentation%2CGuide-4.Scopeandorder'>4. Scope and order</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-5RelationshipwiththeSecurityManageroftheJavaplatform'>5 Relationship with the SecurityManager of the Java platform</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-6.PropertySettingsintheJDK'>6. Property Settings in the JDK</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.Usingtheproperties'>7. Using the properties</a></li>
+<ul>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.1Whentousetheproperties'>7.1 When to use the properties</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.2SettingpropertiesthroughtheAPI'>7.2 Setting properties through the API</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.3UsingSystemProperties'>7.3 Using System Properties</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.4Usingjaxp.properties'>7.4 Using jaxp.properties</a></li>
+</ul>
+    <li><a href='#JAXP1.5Documentation%2CGuide-8.Errorhandling'>8. Error handling</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-7.StAX'>7. StAX</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-8.Conclusion'>8. Conclusion</a></li>
+    <li><a href='#JAXP1.5Documentation%2CGuide-9.References'>9. References</a></li>
+</ul>
+</div>
+
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-1.Background"></a>1. Background</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The JAXP <a href="https://jaxp.java.net/1.4/JAXP-Compatibility.html#JAXP_security" class="external-link" rel="nofollow">secure-processing feature</a> places resource limits on XML processors in order to counter certain type of denial-of-service attacks.  It does not, however, limit the means by which external resources may be fetched, which is also useful when attempting to process XML documents securely.  The current JAXP implementation supports implementation-specific properties that can be used to enforce such restrictions, but there is a need for a standard way to do so.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JAXP 1.5 adds three new properties along with their corresponding System Properties to allow users to specify the type of external connections that can or can not be permitted. The property values are a list of protocols. The JAXP processors check if a given external connection is allowed by matching the protocol with those in the list. Processors will attempt to establish the connection if it is on the list, or reject it if not.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JAXP 1.5 has been integrated into 7u40 and JDK8.</p>
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-2.ExternalResources"></a>2. External Resources</h2>
+
+<p>&nbsp;&nbsp;&nbsp; XML, Schema and XSLT standards support the following constructs that requires external resources. The default behavior of the JDK XML processors is to make a connection and fetch the external resources as specified.</p>
+
+<p><tt>&nbsp;&nbsp;&nbsp;&nbsp; 1) External DTD: references an external Document Type Definition (DTD), example: &lt;&#33;DOCTYPE root_element SYSTEM "url"&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2) External Entity Reference: refer to external data, syntax: &lt;&#33;ENTITY name SYSTEM "url"&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;General entity reference such as the following:</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;?xml version="1.0" standalone="no" ?&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&#33;DOCTYPE doc [&lt;&#33;ENTITY otherFile SYSTEM "otherFile.xml"&gt;]&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;doc&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;foo&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;bar&gt;&amp;otherFile;&lt;/bar&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/foo&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;/doc&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3) External Parameter Entities, syntax &lt;&#33;ENTITY % name SYSTEM uri&gt;, for example:</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;?xml version="1.0" standalone="no"?&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&#33;DOCTYPE doc [</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;&#33;ENTITY % foo SYSTEM "http://www.university.com/student.dtd"&gt;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;%foo;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;]&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4) XInclude: include an external inforset in an XML document</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5)  Reference to XML Schema components using schemaLocation attribute,  Import and Include elements. Example: schemaLocation="http://www.foo.com/schema/bar.xsd"</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6) Combining style sheets using import or include element: syntax: &lt;xsl:include href="include.xsl"/&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7)  xml-stylesheet processing instruction: used to include a stylesheet in  an xml document, syntax: &lt;?xml-stylesheet href="foo.xsl"  type="text/xsl"?&gt;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;</tt><br/>
+<tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8) XSLT Document() function: used  to access nodes in an external XML document, for example,  &lt;xsl:variable name="dummy"  select="document('DocumentFunc2.xml')"/&gt;.</tt></p>
+
+<h2><a name="JAXP1.5Documentation%2CGuide-3.NewProperties"></a>3. New Properties</h2>
+
+<p>&nbsp;&nbsp; JAXP 1.5 defines three new properties that can be used to regulate whether or not XML processors&nbsp; resolve external resources as listed above. The properties are:<br/>
+&nbsp;&nbsp; &#45;&#45; <tt>javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD</tt><br/>
+&nbsp;&nbsp; &#45;&#45; <tt>javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA</tt><br/>
+&nbsp;&nbsp; &#45;&#45; <tt>javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET</tt></p>
+
+<p>&nbsp;&nbsp; These API properties have corresponding system properties and jaxp.properties.</p>
+
+
+
+
+<h3><a name="JAXP1.5Documentation%2CGuide-3.1%7B%7BACCESSEXTERNALDTD%7D%7D"></a>3.1 <tt>ACCESS_EXTERNAL_DTD</tt></h3>
+
+<p>&nbsp;&nbsp; Name: <a href="http://javax.xml.XMLConstants/property/accessExternalDTD" class="external-link" rel="nofollow">http://javax.xml.XMLConstants/property/accessExternalDTD</a></p>
+
+
+<p>&nbsp;&nbsp; Definition: <tt>restrict access to external DTDs, external Entity References to the protocols specified.</tt></p>
+
+<p>&nbsp;&nbsp; Value: <tt>see 3.5 Values of the properties</tt></p>
+
+<p>&nbsp;&nbsp; Default value: <tt>"all",&nbsp; connection permitted to all protocols.</tt></p>
+
+<p>&nbsp;&nbsp; System property: <tt>javax.xml.accessExternalDTD</tt><br/>
+&nbsp;</p>
+
+
+<h3><a name="JAXP1.5Documentation%2CGuide-3.2%7B%7BACCESSEXTERNALSCHEMA%7D%7D"></a>3.2 <tt>ACCESS_EXTERNAL_SCHEMA</tt></h3>
+
+<p>&nbsp;&nbsp; Name: <a href="http://javax.xml.XMLConstants/property/accessExternalSchema" class="external-link" rel="nofollow">http://javax.xml.XMLConstants/property/accessExternalSchema</a><br/>
+&nbsp;&nbsp; Definition: <tt>restrict access to the protocols specified for external reference  set by the schemaLocation attribute, Import and Include element.</tt><br/>
+&nbsp;&nbsp; Value: <tt>see 3.5 Values of the properties</tt><br/>
+&nbsp;&nbsp; Default value: <tt>"all",&nbsp; connection permitted to all protocols.</tt><br/>
+&nbsp;&nbsp; System property: <tt>javax.xml.accessExternalSchema</tt></p>
+
+<h3><a name="JAXP1.5Documentation%2CGuide-3.3%7B%7BACCESSEXTERNALSTYLESHEET%7D%7D"></a>3.3 <tt>ACCESS_EXTERNAL_STYLESHEET</tt></h3>
+
+<p>&nbsp;&nbsp; Name: <a href="http://javax.xml.XMLConstants/property/accessExternalStylesheet" class="external-link" rel="nofollow">http://javax.xml.XMLConstants/property/accessExternalStylesheet</a></p>
+
+
+<p>&nbsp;&nbsp; Definition: <tt>restrict access to the protocols specified for external reference  set by the stylesheet processing instruction, document function, Import  and Include element.</tt></p>
+
+<p>&nbsp;&nbsp; Value: <tt>see 3.5 Values of the properties</tt></p>
+
+<p>&nbsp;&nbsp; Default value: <tt>"all",&nbsp; connection permitted to all protocols.</tt></p>
+
+<p>&nbsp;&nbsp; System property: <tt>javax.xml.accessExternalStylesheet</tt></p>
+
+
+<h3><a name="JAXP1.5Documentation%2CGuide-3.4.%5C%2Flib%2Fjaxp.properties"></a>3.4. {$java.home}/lib/jaxp.properties</h3>
+
+<p>&nbsp;&nbsp;&nbsp; The above properties can be specified in jaxp.properties to define the behavior for all applications using the Java Runtime. The format is "property-name=[value][,value]*", for example:</p>
+
+<p>&nbsp;&nbsp;&nbsp; javax.xml.accessExternalDTD=file,http</p>
+
+<p>&nbsp;&nbsp; The property-names are the same as those of the System Properties that are: javax.xml.accessExternalDTD, javax.xml.accessExternalSchema, and javax.xml.accessExternalStylesheet.</p>
+
+<h3><a name="JAXP1.5Documentation%2CGuide-3.5.Valuesoftheproperties"></a>3.5. Values of the properties</h3>
+
+<p><tt>&nbsp;&nbsp;</tt><br/>
+&nbsp;&nbsp;&nbsp; All of the proposed properties above have values in the same format.</p>
+
+
+<p>&nbsp;&nbsp;&nbsp; Value: a list of protocols separated by comma. A protocol is the scheme portion of an URI, or in the case of the JAR protocol, "jar" plus the scheme portion separated by colon. A scheme is defined as:</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; scheme = alpha &#42;( alpha &#124; digit &#124; "+" &#124; "-" &#124; "." )<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; where alpha = a-z and A-Z.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; And the JAR protocol:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; jar[:scheme]</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Protocols are case-insensitive. Any whitespaces as defined by Character.isSpaceChar in the value will be ignored. Examples of protocols are file, http, jar:file.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Default value: the default value is implementation specific. In JAXP 1.5 RI, Java SE 7u40 and Java SE 8, the default value is "all", granting permissions to all protocols.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Granting all access: the keyword "all" grants permission to all protocols. For example, setting javax.xml.accessExternalDTD=all in jaxp.properties would allow a system to work as before with no restrictions on accessing external DTDs and Entity References.</p>
+
+<p>&nbsp;&nbsp;&nbsp; Denying any access: an empty string, that is, "", means no permission is granted to any  protocol. For example, setting javax.xml.accessExternalDTD="" in  jaxp.properties would instruct the JAXP processors to deny any external connections.</p>
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-4.Scopeandorder"></a>4. Scope and order</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; javax.xml.XMLConstants#FEATURE_SECURE_PROCESSING (FSP) is a required feature for XML processors including DOM, SAX, Schema Validation, XSLT and XPath.&nbsp; When set to true, it is recommended that  implementations enable access restrictions as defined by the new  properties specified above.&nbsp; For compatibility, JAXP 1.5 does not enable the new restrictions, although FSP is true by default for DOM, SAX and Schema Validation.</p>
+
+<p>For JDK 8, the new accessExternal&#42; properties are proposed to be set to the empty string when FSP is explicitly set.&nbsp; Note that, this is only the case when FSP is set through the API, e.g. factory.setFeature(FSP, true). Although FSP is true by default for DOM, SAX and Schema Validation it is not treated as if "explicitly" set, JDK 8 therefore does not set restrictions by default.</p>
+
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; Properties specified in the jaxp.properties affect all invocations of the JDK or JRE, and will override their default values, or those that may have been set by FEATURE_SECURE_PROCESSING.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; System properties, when set, will affect one invocation only, and will override the default settings or those set in jaxp.properties, or those that may have been set by FEATURE_SECURE_PROCESSING.</p>
+
+<p>&nbsp;&nbsp;&nbsp; JAXP properties specified through JAXP factories or SAXParser will take preference over system properties, the jaxp.properties file, as well as javax.xml.XMLConstants#FEATURE_SECURE_PROCESSING.</p>
+
+<p>&nbsp;&nbsp;&nbsp; The new JAXP properties have no effect on the relevant constructs they attempt to restrict in the following situations:</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; a) When there is a resolver and the source returned by the resolver is not null. This applies to entity resolvers that may be set on SAX and DOM parsers, XML resolvers on StAX parsers, LSResourceResolver on SchemaFactory, a Validator or ValidatorHandler, or URIResolver on a transformer.</p>
+
+
+<p>&nbsp;&nbsp;&nbsp; b) When a schema is created explicitly by calling SchemaFactory's newSchema method</p>
+
+
+<p>&nbsp;&nbsp;&nbsp; c) When external resources are not required. For example, the following features/properties are supported by the reference implementation and may be used to instruct the processor to not load the external DTD or resolve external entities.<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://apache.org/xml/features/disallow-doctype-decl" class="external-link" rel="nofollow">http://apache.org/xml/features/disallow-doctype-decl</a> true<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://apache.org/xml/features/nonvalidating/load-external-dtd" class="external-link" rel="nofollow">http://apache.org/xml/features/nonvalidating/load-external-dtd</a> false<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://xml.org/sax/features/external-general-entities" class="external-link" rel="nofollow">http://xml.org/sax/features/external-general-entities</a> false<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="http://xml.org/sax/features/external-parameter-entities" class="external-link" rel="nofollow">http://xml.org/sax/features/external-parameter-entities</a> false</p>
+
+<h2><a name="JAXP1.5Documentation%2CGuide-5RelationshipwiththeSecurityManageroftheJavaplatform"></a>5 Relationship with the SecurityManager of the Java platform</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; a) The JAXP properties will be checked first before a connection is attempted whether or not a SecurityManager is present. This means that a connection may be blocked even if it is granted permission by the SecurityManager. For example, if the JAXP properties are set to disallow http protocol, they will effectively block any connection attempt even when an application has SocketPermission.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; b) For the purpose of restricting connections, the SecurityManager is at a lower level. Permissions will be checked after the JAXP properties are evaluated. If an application does not have SocketPermission for example, then a SecurityException will be thrown even if the JAXP properties are set to allow http connection.</p>
+
+<p>&nbsp;&nbsp;&nbsp; c) When SecurityManager is present, the JAXP FEATURE_SECURE_PROCESSING is set to true. This behavior will not turn on the new restrictions.</p>
+
+<h2><a name="JAXP1.5Documentation%2CGuide-6.PropertySettingsintheJDK"></a>6. Property Settings in the JDK</h2>
+
+<p>&nbsp;&nbsp;&nbsp; The following table shows the default values and behaviors of the new properties in the JDK.</p>
+<div class='table-wrap'>
+    <table><tr><td width="40"></td><td>
+<table class='confluenceTable' border="1"><tbody>
+<tr>
+<th class='confluenceTh'> Values of access properties <br class="atl-forced-newline" /> </th>
+<th class='confluenceTh'> Default Value <br class="atl-forced-newline" /> </th>
+<th class='confluenceTh'> Set FSP(a) <br class="atl-forced-newline" /> </th>
+<th class='confluenceTh'> jaxp.properties </th>
+<th class='confluenceTh'> system property <br class="atl-forced-newline" /> </th>
+<th class='confluenceTh'> API property <br class="atl-forced-newline" /> </th>
+</tr>
+<tr>
+<td class='confluenceTd'> 7u40 <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> all <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> no change <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> override <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> override </td>
+<td class='confluenceTd'> override </td>
+</tr>
+<tr>
+<td class='confluenceTd'> JDK8 <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> all <br class="atl-forced-newline" /> </td>
+<td class='confluenceTd'> change to "" </td>
+<td class='confluenceTd'> override </td>
+<td class='confluenceTd'> override </td>
+<td class='confluenceTd'> override </td>
+</tr>
+</tbody></table>
+        </td></tr>
+        </table>
+</div>
+
+
+
+<p>&nbsp;&nbsp; (a) Set FSP means setting FEATURE_SECURE_PROCESSING explicitly using JAXP factories' setFeature method.</p>
+
+<p>&nbsp;&nbsp; (b) The only behavioral difference between 7u40 and JDK8 is that setting FSP will not change accessExternal&#42; properties in 7u40, but will set the value to an empty string in JDK8. Setting FSP is considered opt-in in JDK8.</p>
+
+<p>&nbsp;&nbsp; (c) The order from left to right in the table reflects the overriding order.  For example, if an accessExternal property is set through the API, it overrides any that may have been set by other means.</p>
+
+<h2><a name="JAXP1.5Documentation%2CGuide-7.Usingtheproperties"></a>7. Using the properties</h2>
+
+
+<h3><a name="JAXP1.5Documentation%2CGuide-7.1Whentousetheproperties"></a>7.1 When to use the properties</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; Restrictions to fetching external resources are only needed if applications process untrusted XML contents. Internal systems and applications that do not handle untrusted contents do not need to be concerned with the new restrictions or make any changes. Since 7u40 and JDK8 have no requirement on such restrictions by default, applications shall experience no behavioral change when upgrading to 7u40 and JDK8.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; For applications that do handle untrusted XML input, Schema, or Stylesheet, if there is already existing security measures, such as enabling the Java Security Manager to grant only trusted external connections, or resolving entities using resolvers, there is no need for the new features added in JAXP 1.5.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; However, JAXP 1.5 does provide straight-forward protections for system and applications that run without security manager. For such applications, restrictions may be considered by using the new feature as described in detail below.</p>
+
+
+
+<h3><a name="JAXP1.5Documentation%2CGuide-7.2SettingpropertiesthroughtheAPI"></a>7.2 Setting properties through the API</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When changing code is feasible, setting the new properties through JAXP factories or parser is the best way to enable restrictions. The properties can be set through the following interfaces:</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; dbf.setAttribute(name, value);<br/>
+&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; SAXParserFactory spf = SAXParserFactory.newInstance();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; SAXParser parser = spf.newSAXParser();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; parser.setProperty(name, value);<br/>
+&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; XMLInputFactory xif = XMLInputFactory.newInstance();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; xif.setProperty(name, value);<br/>
+&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; SchemaFactory schemaFactory = SchemaFactory.newInstance(schemaLanguage);<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; schemaFactory.setProperty(name, value);<br/>
+&nbsp;<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; TransformerFactory factory = TransformerFactory.newInstance();<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; factory.setAttribute(name, value);</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; The following is an example of limiting a DOM parser to local connection only for external DTDs:</p>
+<div class="code panel" style="border-style: solid;border-width: 1px;"><div class="codeContent panelContent">
+        <pre>
+    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+    try {
+        dbf.setAttribute({{XMLConstants.ACCESS_EXTERNAL_DTD}}, "file, jar:file");
+    } catch (IllegalArgumentException e) {
+        //jaxp 1.5 feature not supported
+    }
+</pre>
+</div></div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When code change is possible, and for new development, it is recommended that the new properties be set as demonstrated above. By setting the properties this way, applications can be sure to maintain the desired behavior whether they are deployed to older or newer version of the JDK, or whether the properties are set through System Properties or jaxp.properties.</p>
+
+<h3><a name="JAXP1.5Documentation%2CGuide-7.3UsingSystemProperties"></a>7.3 Using System Properties</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System properties may be useful if changing code is not feasible.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If it is desirable to set restrictions for an entire invocation of the JDK/JRE, set the system properties&nbsp; on the command line; If it is needed for only a portion of the application, the system properties may be set before the section and cleared afterwards. For example, the following code shows how system properties may be used:</p>
+
+<p>&nbsp;&nbsp; &nbsp;&nbsp; //allow resolution of external schemas</p>
+
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.setProperty("javax.xml.accessExternalSchema", "file, http");</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //this setting will affect all processing after it's set<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; some processing here</p>
+
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; //after it's done, clear the property<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; System.clearProperty("javax.xml.accessExternalSchema");<br/>
+&nbsp;&nbsp; &nbsp;</p>
+
+<h3><a name="JAXP1.5Documentation%2CGuide-7.4Usingjaxp.properties"></a>7.4 Using jaxp.properties</h3>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; jaxp.properties is a plain configuration file. It is located at ${java.home}/lib/jaxp.properties where java.home is the JRE install directory, e.g., [path to installation directory]/jdk7/jre.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; An external access restriction can be set by adding this line into jaxp.properties file:<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <tt>javax.xml.accessExternalStylesheet</tt>=file, http</p>
+
+
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; When this is set, all invocations of the JDK/JRE will observe the restriction with regards to loading external Stylesheet.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This feature may be useful for systems that do not want to allow any external connection by XML processors, in which case, all three properties may be set to, for example, file only.</p>
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-8.Errorhandling"></a>8. Error handling</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Since the properties are new to the current release, it is recommended that applications catch exceptions proper to the interface, for example, SAXException in the following example.&nbsp; Catching the applications may work properly on older releases, for example the sample code contains the following method that detects if the sample is run with a version of the JDK or JAXP implementation that supports the new property:</p>
+
+<div class="code panel" style="border-style: solid;border-width: 1px;"><div class="codeHeader panelHeader" style="border-bottom-width: 1px;border-bottom-style: solid;"><b>isNewPropertySupported method</b></div><div class="codeContent panelContent">
+        <pre>
+    public boolean isNewPropertySupported() {
+       try {
+           SAXParserFactory spf = SAXParserFactory.newInstance();
+           SAXParser parser = spf.newSAXParser();
+           parser.setProperty("http://javax.xml.XMLConstants/property/accessExternalDTD", "file");
+       } catch (ParserConfigurationException ex) {
+           fail(ex.getMessage());
+       } catch (SAXException ex) {
+           String err = ex.getMessage();
+           if (err.indexOf("Property 'http://javax.xml.XMLConstants/property/accessExternalDTD' is not recognized.") &gt; -1)
+           {
+             //expected, jaxp 1.5 not supported
+             return false;
+           }
+       }
+       return true;
+  }
+  </pre>
+</div></div>
+<p>&nbsp;&nbsp;&nbsp;&nbsp; If access to external resources is denied due to the restrictions set by the new properties, an exception will be thrown with an error in the following format:</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; [type of construct]: Failed to read [type of construct] "[name of the external resource]", because "[type of restriction]" access is not allowed due to restriction set by the [property name] property.</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp; For example, if fetching an external DTD is denied by restriction to http protocol such as the following:      parser.setProperty("http://javax.xml.XMLConstants/property/accessExternalDTD", "file");<br/>
+&nbsp;&nbsp;&nbsp;&nbsp; and if the parser parses an XML file that contains external reference to "http://java.sun.com/dtd/properties.dtd", the error message would look like the following:</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; External DTD: Failed to read external DTD ''http://java.sun.com/dtd/properties.dtd'', because ''http'' access is not allowed due to restriction set by the accessExternalDTD property.</p>
+
+
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-7.StAX"></a>7. StAX</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The specification for StAX, JSR 173, does not yet support the new properties. However, StAX in the context of JAXP does include the support of these properties. Setting the new properties is similar to SAX or DOM, but through the XMLInputFactory as follows:</p>
+
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; XMLInputFactory xif = XMLInputFactory.newInstance();<br/>
+&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; xif.setProperty("<a href="http://javax.xml.XMLConstants/property/accessExternalDTD" class="external-link" rel="nofollow">http://javax.xml.XMLConstants/property/accessExternalDTD</a>", "file");</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The existing properties and features specified in the StAX, JSR 173 specification will take preference over the new JAXP properties. The SupportDTD property for example, when set to false, will cause a program to throw exception when an input file contains DTD before it can be parsed. For applications that uses the SupportDTD property to disable DTD therefore, the addition of the new properties shall have no effect.</p>
+
+
+
+
+<h2><a name="JAXP1.5Documentation%2CGuide-8.Conclusion"></a>8. Conclusion</h2>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; JAXP 1.5 provides new properties to give controls of fetching external resources to users. The use of the new properties is the same as with other existing properties, except that the properties are provided with corresponding system properties and jaxp.properties so that they can be used for system-wide restrictions or permissions.</p>
+
+<h2><a name="JAXP1.5Documentation%2CGuide-9.References"></a>9. References</h2>
+
+<p>&nbsp;&nbsp;&nbsp; JSR 206 JAXP 1.5 maintenance review: <a href="http://www.jcp.org/en/jsr/detail?id=206" class="external-link" rel="nofollow">http://www.jcp.org/en/jsr/detail?id=206</a></p>
+
+
+
+
+
+<p>&nbsp;&nbsp;&nbsp; 7u40 Release Notes</p>
+
+<p>&nbsp;&nbsp;&nbsp; 7u40 APIs &amp; Documentation</p>
+
+<p>&nbsp;&nbsp;&nbsp; JEP 185: <a href="http://openjdk.java.net/jeps/185" class="external-link" rel="nofollow">http://openjdk.java.net/jeps/185</a></p>
+        </div>
+
+</body>
+</html>

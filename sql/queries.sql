@@ -160,8 +160,11 @@ INSERT INTO TOPICMETRICS
 (
     `TOPIC_ID`, `METRIC_ID`, `DATE`, `VALUE`
 )
-SELECT t.TOPIC_ID as TopicID, 2 as MetricID, MIN(p.DATE) as Date, SUM(t.WEIGHT)/m.POST_COUNT as
-Value
+SELECT 
+    t.TOPIC_ID as TopicID, 
+    2 as MetricID, 
+    MIN(p.DATE) as Date, 
+    SUM(t.WEIGHT)/m.POST_COUNT as Value
 FROM POSTS p
 JOIN THETA t
   ON t.POST_ID = p.ID
@@ -201,8 +204,36 @@ LINES TERMINATED BY '\n';
 
 
 ## Technical Impact
+## For a given technology, topic, and month:
+## For each tag in the technology, what is the sum of tag_scores for that tag
+## and topic?
 
-# TODO
+# TODO:  not done yet. Need to divide the SumWeight by the number of theta score
+# of all the question posts in that month.
+
+SELECT 
+    tt.TECHNOLOGY_ID as TechnologyID,
+    th.TOPIC_ID as TopicID,
+    p.DATE as Date,
+    #tt.TAG_ID as TagID,
+    #pt.POST_ID as PostID,
+    Sum(th.WEIGHT) as SumWeight 
+FROM TECHNOLOGIES_TAGS tt
+JOIN POSTS_TAGS pt 
+    ON pt.TAG_ID = tt.TAG_ID
+JOIN POSTS p 
+    ON p.ID = pt.POST_ID
+JOIN THETA th
+    on th.POST_ID = pt.POST_ID
+GROUP BY TechnologyID, TopicID, Year(Date), Month(Date)
+ORDER BY TechnologyID, TopicID 
+limit 200;
+
+
+
+INTO OUTFILE '/tmp/tagscore.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
 
 
 
@@ -228,5 +259,11 @@ SELECT  COUNT(ID) as NumPosts, DATE  Month, POSTTYPE as Type
 FROM    POSTS
 GROUP BY YEAR(DATE), MONTH(DATE), Type
 INTO OUTFILE '/tmp/out.csv'
+FIELDS TERMINATED BY ','
+LINES TERMINATED BY '\n';
+
+SELECT  *
+FROM    TOPICMETRICS
+INTO OUTFILE '/tmp/topicmetrics.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';

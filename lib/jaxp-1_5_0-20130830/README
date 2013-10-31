@@ -1,0 +1,57 @@
+
+JavaTM API for XML Processing
+README
+
+Specification Version: 1.5
+Reference Implementation (RI) Version: 1.5.0
+
+The Java API for XML Processing (JAXP) enables applications to parse,
+transform, validate and query XML documents using an API that is
+independent of any particular XML processor implementation. JAXP
+provides a pluggability layer to enable vendors to provide their own
+implementations without introducing dependencies in application code.
+Using this software, application and tool developers can build
+fully-functional XML-enabled Java applications for e-commerce,
+application integration, and web publishing.
+
+The Java Platform, Standard Edition version 7 and 8 include JAXP
+1.5. JAXP 1.5 is a maintenance release of JAXP 1.4 with support for
+new security related properties.  JAXP 1.5 FCS was released on
+August 30, 2013 with a code base the same as that in JDK 7u40. JAXP 1.5.0, 
+including changes/bug fixes as listed in the change log, is now in
+Java SE 7 update 40.  For information about the current development activities,
+please refer to the JAXP project on Java.net (http://jaxp.java.net/).
+
+Release Notes:
+
+    JAXP 1.5.0 Release Notes (docs/ReleaseNotes.html)
+
+This bundle installs the following files and components:
+
+    * jaxp-api.src.zip -- JAXP API source files.
+    * jaxp-ri.src.zip -- JAXP RI source files.
+    * jaxp-api.jar -- JAXP API jar file under the lib directory.
+    * jaxp-ri.jar -- JAXP RI jar file under the lib directory.
+    * Samples -- samples demonstrating some use cases of JAXP. 
+      Please refer to samples/README for more details.
+
+Licenses:
+
+    * This software is licensed under Common Development and
+      Distribution License.Refer to CDDLv1.1.txt.
+    * Additional copyright notices and license terms applicable to
+      portions of the software are set forth in the 3rd Party License
+      README, as well as JSR173 License.
+
+Guide:
+
+    JAXP 1.5 Guide (docs/JAXP1.5Guide.html)
+
+Feedback: 
+
+You may use the mailing lists for JAXP to send us feedback. For
+general questions, please join us in the JAXP forum
+(http://home.java.net/forums/java-web-services-and-xml/jaxp) or post your
+messages to users@jaxp.java.net. For issues and bugs, please use
+issues@jaxp.java.net. You may need to subscribe to the mailing
+lists in order to send and receive messages.

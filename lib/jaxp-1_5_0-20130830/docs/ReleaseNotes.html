@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head> 
+  <!-- $Id: ReleaseNotes.html,v 1.2 2010/09/03 18:54:18 joehw Exp $ -->
+  <title>JAXP 1.5.0 Release  Notes</title>
+  <link rel="stylesheet" type="text/css" href="style/default.css">
+	<style type="text/css" media="all">
+  <!--
+     a:link    { color:blue; } 
+     a:hover   { color:red;text-decoration:none;} 
+     a:visited { color:purple; }
+     .TBD {
+	     font-style: italic;
+       font-weight: bold;
+	     color: #FF0000;
+     }
+     .Fixed {
+	     font-family: "Courier New", Courier, mono;
+	     font-size: smaller;
+     }
+    .def {
+		  font-style: italic;
+		 }
+     -->
+  </style>
+</head>
+
+
+<body bgcolor="#FFFFFF">
+    <center>
+      <h2><font color="#000099">Java<sup><font size="-2">TM</font></sup> API for XML 
+        Processing Release Notes</font></h2>
+    </center>
+
+    <center>
+      <b>Specification Version:</b> 1.5<br />
+      <b>Reference Implementation (RI) Version:</b> 1.5.0
+      <br>August 30, 2013
+    </center>
+
+    <p>
+        The JAXP 1.5.0 release corresponds to Java SE 7 update 40</a>. 
+        It includes security and conformance enhancement, and fixes of critical issues
+        in the areas of performance, and regression. The sources of this release 
+        have been integrated into OpenJDK 7 update 40. 
+        Please read below for more details about this update. </p>
+    
+    <p>
+        <p><h3>
+            Changes and bug fixes:
+        </h3>
+        </p>
+    <ol>
+        <li>Security<br>
+        JAXP 1.5 adds three new properties along with their corresponding System Properties 
+        to allow users to specify the type of external connections that can or can not be permitted.
+        This addition gives controls of fetching external resources to users so that the
+        process can be restricted at users' discretion. 
+        
+        For more details, please see <a href="JAXP1.5Guide.html">JAXP 1.5 guide</a>.
+        
+        <br><br>
+        </li>
+        <li>Others<br>
+        Other than implementing JAXP 1.5, this release also includes other security, conformance
+        fixes. Please refer to:<br><br><a href="changelog.html">The JAXP 1.5.0 Change Log</a>
+        <br><br>
+        </li>
+        
+    </ol>
+
+    </p>
+
+
+</body>
+</html>

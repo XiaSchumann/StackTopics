@@ -40,34 +40,13 @@
          task) and adjust the jar's manifest accordingly. -->
     <target name="jar" depends="compile">
         <jar jarfile="${jar}" basedir="${build}">
+            <zipgroupfileset dir="${lib}" includes="**/*.jar"/>
             <manifest>
-                <attribute name="Main-Class" value="com.swtanalytics.stacktopics.EasyMain"/>
+                <attribute name="Main-Class" value="com.swtanalytics.stacktopics.ParsePosts"/>
             </manifest>
         </jar>
     </target>
 
-
-    <!-- Run the tests, i.e., all files that end in *Test.java.
-         NOTE: the "test-coverage" task below is a copy-and-paste of this task,
-         only with a few additional items. So if you change this task, be sure
-         to update the "test-coverage" task, too. -->
-    <target name="test" depends="clean,jar">
-        <junit showoutput="true" haltonfailure="true" fork="true">
-            <classpath >
-                <fileset dir="${dist}">
-                    <include name="**/*.jar" />
-                </fileset>
-            </classpath>
-
-            <formatter type="brief" usefile="false"/>
-            <batchtest failureproperty="failed" >
-                <fileset dir="${src}">
-                    <include name="**/*Test.java" />
-                </fileset>
-            </batchtest>
-        </junit>
-        <echo message="All Tests Passed!" />
-    </target>
 
 
 </project>

@@ -28,28 +28,27 @@ Assumptions:
 
 # Create a CSV file from the XML file (posts):
 
-```
-./scripts/xml2CSV.pl ../SO/June2010/med/posts.xml ../SO/June2010/med/posts.csv
-```
-(On 500K rows: 70s)
-
-# Create a CSV file from the XML file (tags):
 
 ```
-./scripts/xml2CSVTags.pl ../SO/June2010/med/posts.xml ../SO/June2010/med/posts_tags.csv ../SO/June2010/med/tags.csv
+java -jar dist/stacktopics.jar -f ../SO/June2010/med/posts.xml \
+-p ../SO/June2010/med/posts.csv \
+-t ../SO/June2010/med/tags.csv \
+-m ../SO/June2010/med/posts_tags.csv \
+-o ../SO/June2010/med/raw
 ```
-(On 500K rows: 60s)
-
-
-# Preprocess the posts using the lcsp Perl module:
-
-```
-./scripts/stripBody.pl ../SO/June2010/med/posts.xml ../SO/June2010/med/raw
-```
-(On 500K rows: 120s)
+(On 500K rows: 3m)
 
 ```
-./scripts/preprocessPosts.pl ../SO/June2010/med/raw ../SO/June2010/med/pre
+java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
+-p ../SO/Sep2013/posts.csv \
+-t ../SO/Sep2013/tags.csv \
+-m ../SO/Sep2013/posts_tags.csv \
+-o ../SO/Sep2013/raw
+```
+(On 15M rows: m)
+
+```
+./scripts/preprocessPosts.pl ../SO/Sep2013/raw ../SO/Sep2013/pre
 ```
 (On 500K rows: 17m)
 
@@ -57,7 +56,7 @@ Assumptions:
 # Add the preprocessed posts into the CSV:
 
 ```
-./scripts/mergePosts.pl ../SO/June2010/med/posts.csv ../SO/June2010/med/pre > ../SO/June2010/med/posts-pre.csv
+./scripts/mergePosts.pl ../SO/Sep2013/posts.csv ../SO/Sep2013/pre > ../SO/Sep2013/posts-pre.csv
 ```
 (On 500K rows: 10m)
 
@@ -68,8 +67,8 @@ Assumptions:
 
 ```
 ../mallet-2.0.7/bin/mallet import-dir \
---input ../SO/June2010/med/pre \
---output ../SO/June2010/med/pre.mallet \
+--input ../SO/Sep2013/pre \
+--output ../SO/Sep2013/pre.mallet \
 --keep-sequence --gram-sizes 1,2 --keep-sequence-bigrams 
 ```
 (On 500K rows: 3m)
@@ -78,9 +77,9 @@ Assumptions:
 ```
 ../mallet-2.0.7/bin/mallet train-topics \
 --config ./scripts/train-topics.conf \
---input ../SO/June2010/med/pre.mallet \
---output-doc-topics ../SO/June2010/med/allfiles.txt \
---xml-topic-phrase-report ../SO/June2010/med/topic-phrases.xml
+--input ../SO/Sep2013/pre.mallet \
+--output-doc-topics ../SO/Sep2013/allfiles.txt \
+--xml-topic-phrase-report ../SO/Sep2013/topic-phrases.xml
 ```
 (On 500K rows: 59m)
 
@@ -89,13 +88,13 @@ Assumptions:
 
 
 ```
-./scripts/mallet2CSVTheta.pl ../SO/June2010/med/allfiles.txt > ../SO/June2010/med/theta.csv
+./scripts/mallet2CSVTheta.pl ../SO/Sep2013/allfiles.txt > ../SO/Sep2013/theta.csv
 ```
 (On 500K rows: 24s)
 
 
 ```
-./scripts/mallet2CSVWords.pl ../SO/June2010/med/topic-phrases.xml ../SO/June2010/med/topics.csv
+./scripts/mallet2CSVWords.pl ../SO/Sep2013/topic-phrases.xml ../SO/Sep2013/topics.csv
 ```
 (On 500K rows: 1s)
 
@@ -126,9 +125,6 @@ Then, run the queries from `sql/queries.sql`.
 
 Design
 ======
-
-
-
 
 
 
