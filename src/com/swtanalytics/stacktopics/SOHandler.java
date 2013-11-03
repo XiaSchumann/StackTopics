@@ -29,8 +29,6 @@ public class SOHandler extends DefaultHandler {
     public String outPostsFileName = "";
     public String outTagsFileName = "";
     public String outPostsTagsFileName = "";
-    public String outBodyDirectory = "";
-    
     
     BufferedWriter bw_Posts = null;
     BufferedWriter bw_Tags = null;
@@ -111,11 +109,6 @@ public class SOHandler extends DefaultHandler {
 					}
 				}
 				
-				// Write the body
-				BufferedWriter bw_thisBody = makeWriter(outBodyDirectory + "/" + ID);
-				bw_thisBody.write(Body);
-				bw_thisBody.close();
-
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

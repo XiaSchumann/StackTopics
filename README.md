@@ -43,7 +43,6 @@ java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 -p ../SO/Sep2013/posts.csv \
 -t ../SO/Sep2013/tags.csv \
 -m ../SO/Sep2013/posts_tags.csv \
--o ../SO/Sep2013/raw
 ```
 (On 15M rows: m)
 

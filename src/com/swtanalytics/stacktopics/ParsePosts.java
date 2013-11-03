@@ -30,9 +30,6 @@ public class ParsePosts extends DefaultHandler {
     @Option(name="-m", usage="The name of the output posts_tags mapping file (csv).")
     public String outPostsTagsFileName = "";
     
-    @Option(name="-o", usage="The name of the output directory for post bodies.")
-    public String outBodyDirectory = "";
-
 
     protected void parse_input(String[] args) {
 
@@ -55,18 +52,8 @@ public class ParsePosts extends DefaultHandler {
     	so.outPostsFileName     = outPostsFileName;
     	so.outTagsFileName      = outTagsFileName;
     	so.outPostsTagsFileName = outPostsTagsFileName;
-    	so.outBodyDirectory     = outBodyDirectory;
     	
         
-		File file = new File(outBodyDirectory);
-		if (!file.exists()) {
-			try {
-				file.mkdir();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	
         SAXParserFactory spf = SAXParserFactory.newInstance();
         SAXParser saxParser = spf.newSAXParser();
         XMLReader xmlReader = saxParser.getXMLReader();
