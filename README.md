@@ -33,8 +33,7 @@ Assumptions:
 java -jar dist/stacktopics.jar -f ../SO/June2010/med/posts.xml \
 -p ../SO/June2010/med/posts.csv \
 -t ../SO/June2010/med/tags.csv \
--m ../SO/June2010/med/posts_tags.csv \
--o ../SO/June2010/med/raw
+-m ../SO/June2010/med/posts_tags.csv 
 ```
 (On 500K rows: 3m)
 
@@ -42,22 +41,23 @@ java -jar dist/stacktopics.jar -f ../SO/June2010/med/posts.xml \
 java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 -p ../SO/Sep2013/posts.csv \
 -t ../SO/Sep2013/tags.csv \
--m ../SO/Sep2013/posts_tags.csv \
+-m ../SO/Sep2013/posts_tags.csv 
 ```
 (On 15M rows: m)
 
 ```
-./scripts/preprocessPosts.pl ../SO/Sep2013/raw ../SO/Sep2013/pre
+./scripts/preprocessPosts.pl ../SO/Sep2013/posts.csv ../SO/Sep2013/posts-pre.csv
 ```
 (On 500K rows: 17m)
+(On 15M rows: m)
 
 
 # Add the preprocessed posts into the CSV:
 
 ```
-./scripts/mergePosts.pl ../SO/Sep2013/posts.csv ../SO/Sep2013/pre > ../SO/Sep2013/posts-pre.csv
+./scripts/createJustPre.pl ../SO/Sep2013/posts-pre.csv > ../SO/Sep2013/import-to-mallet.txt
 ```
-(On 500K rows: 10m)
+(On 15M rows: 3m)
 
 
 
@@ -65,12 +65,12 @@ java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 #### Run LDA on the posts using MALLET
 
 ```
-../mallet-2.0.7/bin/mallet import-dir \
---input ../SO/Sep2013/pre \
+../mallet-2.0.7/bin/mallet import-file \
+--input ../SO/Sep2013/import-to-mallet.txt \
 --output ../SO/Sep2013/pre.mallet \
---keep-sequence --gram-sizes 1,2 --keep-sequence-bigrams 
+--keep-sequence --keep-sequence-bigrams 
 ```
-(On 500K rows: 3m)
+(On 15M rows: m)
 
 
 ```
@@ -78,6 +78,9 @@ java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 --config ./scripts/train-topics.conf \
 --input ../SO/Sep2013/pre.mallet \
 --output-doc-topics ../SO/Sep2013/allfiles.txt \
+--output-topic-keys ../SO/Sep2013/topics.dat \
+--topic-word-weights-file ../SO/Sep2013/wordweights.dat \
+--word-topic-counts-file ../SO/Sep2013/topiccounts.dat \
 --xml-topic-phrase-report ../SO/Sep2013/topic-phrases.xml
 ```
 (On 500K rows: 59m)

@@ -15,6 +15,8 @@ my $preprocessor = lscp->new;
 $preprocessor->setOption("logLevel", "error");
 $preprocessor->setOption("inPath", $rawDir);
 $preprocessor->setOption("outPath", $preDir);
+$preprocessor->setOption("oneInputFile", 1);
+$preprocessor->setOption("oneOutputFile", 1);
 $preprocessor->setOption("isCode", 0);
 $preprocessor->setOption("doTokenize", 0);
 $preprocessor->setOption("doStemming", 1);
