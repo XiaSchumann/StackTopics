@@ -56,7 +56,6 @@ INSERT INTO TECHNOLOGIES (GROUP_ID, LABEL) VALUES
 (7, "netbeans"); 
 
 
-CALL addAssociation("c#-learning", "c#4.0")
 
 ###########################################################################
 ## Setup helper tables and stuff

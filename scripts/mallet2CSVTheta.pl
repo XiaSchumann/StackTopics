@@ -25,7 +25,7 @@ while (<INFILE>){
 
         my $N = (scalar(@cols)-2)/2;   # number of cols
 
-        my $min = 1/$N;
+        my $min = .05;
 
         # The lines have topic amount topic amount ... 
         for (my $i=2;$i<=$N+2;$i+=2){
