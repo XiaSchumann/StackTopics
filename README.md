@@ -111,7 +111,6 @@ java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 
 # Reformat LDA output and load into DB
 
-
 ```
 ./scripts/mallet2CSVTheta.pl ../SO/Sep2013/60/allfiles.txt > ../SO/Sep2013/60/theta.csv
 ```
@@ -140,18 +139,52 @@ Fire up the mysql command line:
 mysql -u root --local-infile=1 so
 ``` 
 
-Load the schema from `sql/schema.ddl`.
+Load the schema and data from `sql/schema.ddl`.
 
 Then, in a seperate window, run the Perl script `sql/insertTechnologies.pl` to add all the technology-tag
 relationships.
 
-Then, run the queries from `sql/queries.sql`.
+#### Running the analysis queries
+
+Then, run the queries from `sql/queries.sql`. The queries will create a number
+of CSV files.
 
 
+#### Creating the graphs for the report
+
+- Fig 1: Number of new posts per month.
+   - numpostsbymonth.csv
+   - TODO: which R script?
+- Fig 2a and 2b: New tags created per month.
+   - newtagcountbymonth.csv 
+   - TODO: which R script?
+- Fig 6: Increasing and decreasing trends
+   - topicimpactbymonth.csv 
+   -
+- Fig 7a and 7b: Comparative trend analysis
+   - topicimpactbymonth.csv 
+   - 
+- Fig 8a-f: Focused trend analysis
+   - techimpact.csv
+   - 
+- Table 1: The topics discovered by LDA and Table 2: The topic shares and trends
+   - topicshare.csv
+   - 
+- Table 3: Top tags related to each topic
+   - tagscore.csv 
+   - 
 
 
-Design
-======
+#### Future work
+
+- Better automation of tool set; increased efficiency
+- Using interactive analysis tools to explore trends
+- Creating browser for questions/answers: can explore posts via topic, time,
+  tag, keyword, etc.
+- Take a post's ViewCount into account
+- Take user behavior into account: first, classify a developer as, say, a .net
+  developer. Then see what topics they are interested in.
+
 
 
 
