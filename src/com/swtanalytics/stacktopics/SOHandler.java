@@ -78,40 +78,43 @@ public class SOHandler extends DefaultHandler {
         	
             String ID = atts.getValue("Id") ;
             String PostType = atts.getValue("PostTypeId") ;
-            String CreationDate = atts.getValue("CreationDate") ;
-            String Body = atts.getValue("Body");
-            String Tags = atts.getValue("Tags");
-            
-            // Create an escaped, one-line version of Body, for the CSV file
-            String Body_escapeXML = StringEscapeUtils.escapeXml(Body);
-            Body_escapeXML = Body_escapeXML.replaceAll("\n", "&#xA;");
-            
-            // Remove the  extra fluff, e.g., "2008-07-31T21:42:52.667" => "2008-07-31"
-            CreationDate = CreationDate.replaceFirst("T.*", "");
-            
-            try {
+
+            if (PostType.equals("1") || PostType.equals("2")){
+                String CreationDate = atts.getValue("CreationDate") ;
+                String Body = atts.getValue("Body");
+                String Tags = atts.getValue("Tags");
+                
+                // Create an escaped, one-line version of Body, for the CSV file
+                String Body_escapeXML = StringEscapeUtils.escapeXml(Body);
+                Body_escapeXML = Body_escapeXML.replaceAll("\n", "&#xA;");
+                
+                // Remove the  extra fluff, e.g., "2008-07-31T21:42:52.667" => "2008-07-31"
+                CreationDate = CreationDate.replaceFirst("T.*", "");
+                
+                try {
             	
-            	// Write the main CSV data
-				bw_Posts.write(String.format("%s|%s|%s|%s|\n", ID, PostType, CreationDate, Body_escapeXML));
+            	    // Write the main CSV data
+				    bw_Posts.write(String.format("%s|%s|%s|%s|\n", ID, PostType, CreationDate, Body_escapeXML));
+				    
+				    // Write the post/Tag mapping
+				    if (Tags != null){
+					    Tags = Tags.replaceAll("<", "");
+					    String tags[] = Tags.split(">");
+					    
+					    for (int i=0; i<tags.length;++i){
+						    String tag = tags[i];
+						    
+						    if (! tagTable.containsKey(tag)){
+							    tagTable.put(tag, tagCount++);
+						    }
+						    bw_PostsTags.write(String.format("%s|%d\n", ID, tagTable.get(tag) ));
+					    }
+				    }
 				
-				// Write the post/Tag mapping
-				if (Tags != null){
-					Tags = Tags.replaceAll("<", "");
-					String tags[] = Tags.split(">");
-					
-					for (int i=0; i<tags.length;++i){
-						String tag = tags[i];
-						
-						if (! tagTable.containsKey(tag)){
-							tagTable.put(tag, tagCount++);
-						}
-						bw_PostsTags.write(String.format("%s|%d\n", ID, tagTable.get(tag) ));
-					}
-				}
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			    } catch (IOException e) {
+				    e.printStackTrace();
+			    }
+            }
         }
     }
 

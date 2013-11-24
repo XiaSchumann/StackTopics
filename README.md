@@ -28,52 +28,46 @@ Assumptions:
 
 # Create a CSV file from the XML file (posts):
 
-
-```
-java -jar dist/stacktopics.jar -f ../SO/June2010/med/posts.xml \
--p ../SO/June2010/med/posts.csv \
--t ../SO/June2010/med/tags.csv \
--m ../SO/June2010/med/posts_tags.csv 
-```
-(On 500K rows: 3m)
-
 ```
 java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 -p ../SO/Sep2013/posts.csv \
--t ../SO/Sep2013/tags.csv \
--m ../SO/Sep2013/posts_tags.csv 
+-t ../SO/Sep2013/tagstmp.csv \
+-m ../SO/Sep2013/posts_tagstmp.csv 
 ```
 (On 15M rows: 840m)
 
-```
-./scripts/preprocessPosts.pl ../SO/Sep2013/posts.csv ../SO/Sep2013/posts-pre.csv
-```
-(On 500K rows: 17m)
-(On 15M rows: 840m)
 
+
+./scripts/preprocessPosts.pl ../SO/Sep2013/posts.csv ../SO/Sep2013/posts-pretmp.csv
+###### (On 15M rows: 840m)
+
+
+#### Prune the uncommon words and tags
+
+./scripts/pruneWords.pl ../SO/Sep2013/posts-pretmp.csv > ../SO/Sep2013/posts-pre.csv
+###### (On 15M rows: 5m)
+
+./scripts/pruneTags.pl ../SO/Sep2013/posts_tagstmp.csv > ../SO/Sep2013/posts_tags.csv
+###### (On 15M rows: 1m)
+
+./scripts/pruneTags2.pl ../SO/Sep2013/posts_tags.csv ../SO/Sep2013/tagstmp.csv > ../SO/Sep2013/tags.csv
+###### (On 15M rows: 1m)
 
 # Add the preprocessed posts into the CSV:
 
-```
 ./scripts/createJustPre.pl ../SO/Sep2013/posts-pre.csv > ../SO/Sep2013/import-to-mallet.txt
-```
-(On 15M rows: 3m)
-
-
+###### (On 15M rows: 3m)
 
 
 #### Run LDA on the posts using MALLET
 
-```
 ../mallet-2.0.7/bin/mallet import-file \
 --input ../SO/Sep2013/import-to-mallet.txt \
 --output ../SO/Sep2013/pre.mallet \
 --keep-sequence --keep-sequence-bigrams 
-```
-(On 15M rows: 43m)
+###### (On 15M rows: 43m)
 
 
-```
 ../mallet-2.0.7/bin/mallet train-topics \
 --config ./scripts/train-topics.conf \
 --input ../SO/Sep2013/pre.mallet \
@@ -83,46 +77,15 @@ java -jar dist/stacktopics.jar -f ../SO/Sep2013/Posts.xml \
 --topic-word-weights-file ../SO/Sep2013/60/wordweights.dat \
 --word-topic-counts-file ../SO/Sep2013/60/topiccounts.dat \
 --xml-topic-phrase-report ../SO/Sep2013/60/topic-phrases.xml
-```
-(On 500K rows: 59m)
-(On 15M rows: 1023m)
-
-../mallet-2.0.7/bin/mallet train-topics \
---config ./scripts/train-topics.conf \
---num-topics 100 \
---input ../SO/Sep2013/pre.mallet \
---output-doc-topics ../SO/Sep2013/100/allfiles.txt \
---output-topic-keys ../SO/Sep2013/100/topics.dat \
---topic-word-weights-file ../SO/Sep2013/100/wordweights.dat \
---word-topic-counts-file ../SO/Sep2013/100/topiccounts.dat \
---xml-topic-phrase-report ../SO/Sep2013/100/topic-phrases.xml
-
-
-../mallet-2.0.7/bin/mallet train-topics \
---config ./scripts/train-topics.conf \
---num-topics 200 \
---input ../SO/Sep2013/pre.mallet \
---output-doc-topics ../SO/Sep2013/200/allfiles.txt \
---output-topic-keys ../SO/Sep2013/200/topics.dat \
---topic-word-weights-file ../SO/Sep2013/200/wordweights.dat \
---word-topic-counts-file ../SO/Sep2013/200/topiccounts.dat \
---xml-topic-phrase-report ../SO/Sep2013/200/topic-phrases.xml
-
+###### (On 15M rows: 1023m)
 
 # Reformat LDA output and load into DB
 
-```
 ./scripts/mallet2CSVTheta.pl ../SO/Sep2013/60/allfiles.txt > ../SO/Sep2013/60/theta.csv
-```
-(On 500K rows: 24s)
-(On 15M rows: 21m)
+#### (On 15M rows: 21m)
 
-
-```
 ./scripts/mallet2CSVWords.pl ../SO/Sep2013/60/topic-phrases.xml ../SO/Sep2013/60/topics.csv
-```
-(On 500K rows: 1s)
-(On 15M rows: 1s)
+###### (On 15M rows: 1s)
 
 
 #### Loading the data
