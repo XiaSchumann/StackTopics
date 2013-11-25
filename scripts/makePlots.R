@@ -1,10 +1,16 @@
 
-base="/swta/SO/June2010/med"
+base="../results/60"
 
 ###################################
 ###################################
-tags = read.table(sprintf("%s//newtagcount.csv", base), sep=",", header=F, stringsAsFactors=F)
+# TAGS
+###################################
+###################################
+
+# TODO
+tags = read.table(sprintf("%s/newtagcount.csv", base), sep=",", header=F, stringsAsFactors=F)
 colnames(tags) = c("Tags", "Year", "Month")
+
 
 tags$Date = sprintf("%d-%02d-01", tags$Year, tags$Month)
 tags$Cum = cumsum(tags$Tags)
@@ -38,37 +44,109 @@ dev.off()
 
 ###################################
 ###################################
-posts = read.table('post_growth.csv', sep=",", header=T, stringsAsFactors=F)
+# NUMBER OF POSTS BY TYPE AND MONTH
+###################################
+###################################
 
-# Format the date
-posts$Month = sprintf("%s-01", posts$Month) 
-posts$Month = strptime(posts$Month, format="%Y-%m-%d")
+posts = read.table(sprintf("%s/numpostsbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
 
-pdf("../latex_revision/paper/figures/post_growth.pdf", width=10, height=5)
-par(mar=c(5.1, 5.1, 1.1, 1.1))
-x = barplot(posts$Posts/1000, ylab="New Posts Added (K)", cex.axis=1.5, cex.lab=1.7, space=.5)
+colnames(posts) = c("count", "date", "type")
 
-# Draw the time labels
-atx = seq(1, length(posts$Month), by=2)
-axis(side=1, at=x[atx], labels=format(posts$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+posts = posts[-which(posts$type==3),]
+posts = posts[-which(posts$type==4),]
+posts = posts[-which(posts$type==5),]
+posts = posts[-which(posts$type==6),]
+posts = posts[-which(posts$type==7),]
+posts = posts[-which(posts$type==8),]
+
+posts$date = strptime(posts$date, format="%Y-%m-%d")
+
+dates = unique(posts$date)
+
+type1 = c(posts[which(posts$type==1),]$count)
+type2 = c(posts[which(posts$type==2),]$count)
+
+df = rbind(type1/1000, type2/1000)
+rownames(df) = c("Questions", "Answers")
+
+
+pdf("./out/post_growth.pdf", width=10, height=5)
+    par(mar=c(5.1, 5.1, 1.1, 1.1))
+    x = barplot(df, ylab="New Posts Added (K)", cex.axis=1.5, cex.lab=1.7, space=.5)
+
+    # Draw the time labels
+    atx = seq(1, length(dates), by=2)
+    axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 dev.off()
 
 
 
+## Now do cumulative sums
+df[1,] = cumsum(df[1,])
+df[2,] = cumsum(df[2,])
+
+pdf("./out/post_growth_cum.pdf", width=10, height=5)
+    par(mar=c(5.1, 5.1, 1.1, 1.1))
+    plot(c(1, length(dates)), c(min(df[1,]), max(df[2,])), type="n", 
+        cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Cumulative Posts (K)")
+
+    lines(seq(1, length(dates), 1), df[1,], type="l", lwd=3.0, col="black", lty=1)
+    lines(seq(1, length(dates), 1), df[2,], type="l", lwd=3.0, col="black", lty=2)
+
+    # Draw the time labels
+    atx = seq(1, length(dates), by=2)
+    axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+dev.off()
+
 
 ###################################
 ###################################
-trends = read.table('topic_trends.csv', sep=",", header=T, stringsAsFactors=F, check.names=F)
+# TOPIC IMPACT
+###################################
+###################################
+impact = read.table(sprintf("%s/topicimpactbymonth.csv", base), sep=",", header=F, stringsAsFactors=F, check.names=F)
+topicnames = read.table(sprintf("%s/topicnames.csv", base), sep=",", header=F, stringsAsFactors=F, check.names=F)
+
+
+# Get rid of metric ID column
+impact = impact[,-2]
+colnames(impact) = c("topic_id", "date", "impact")
+impact$date = strptime(impact$date, format="%Y-%m-%d")
+
+
+# Plot all the topics, one per plot
+
+IDs = unique(impact$topic_id)
+
+for (i in 1:length(IDs)){
+    thisID = IDs[i]
+    thisName = topicnames[i,2]
+
+    a = impact[which(impact$topic_id==thisID),]
+
+    x = 1:length(a$date)
+
+    pdf(sprintf("./out/impact_%02d.pdf", thisID), width=7, height=5)
+    par(mar=c(5.1, 5.1, 1.1, 1.1))
+    plot(c(1, length(a$date)), c(min(a$impact), max(a$impact)), type="n", 
+        cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Topic Impact")
+
+    lines(x, a$impact, type="l", lwd=3.0, col="black", lty=1)
+
+    atx = seq(1, length(a$date), by=2)
+    axis(side=1, at=x[atx], labels=format(a$date[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+
+    title(sprintf("%s (id=%d)", thisName, thisID))
+    dev.off()
+}
+
+
+
+# TODO: below
+
 
 cols=c("black", "black", "black", "grey", "grey", "grey")
 ltys=c(1, 2, 4, 1, 2, 4)
-
-colsToPlot=4:ncol(trends)
-dates = colnames(trends)[colsToPlot]
-dates = sprintf("%s-01", dates) 
-dates = strptime(dates, format="%Y-%m-%d")
-
-x = 1:length(colsToPlot)
 
 
 ###################################
