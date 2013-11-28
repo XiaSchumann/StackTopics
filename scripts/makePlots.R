@@ -1,5 +1,5 @@
 
-base="../results/60"
+base="../results/60/analysis"
 
 ###################################
 ###################################
@@ -7,14 +7,12 @@ base="../results/60"
 ###################################
 ###################################
 
-# TODO
-tags = read.table(sprintf("%s/newtagcount.csv", base), sep=",", header=F, stringsAsFactors=F)
+tags = read.table(sprintf("%s/newtagcountbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
 colnames(tags) = c("Tags", "Year", "Month")
 
 
 tags$Date = sprintf("%d-%02d-01", tags$Year, tags$Month)
 tags$Cum = cumsum(tags$Tags)
-
 
 # Format the date
 tags$Date = strptime(tags$Date, format="%Y-%m-%d")
@@ -51,13 +49,6 @@ dev.off()
 posts = read.table(sprintf("%s/numpostsbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
 
 colnames(posts) = c("count", "date", "type")
-
-posts = posts[-which(posts$type==3),]
-posts = posts[-which(posts$type==4),]
-posts = posts[-which(posts$type==5),]
-posts = posts[-which(posts$type==6),]
-posts = posts[-which(posts$type==7),]
-posts = posts[-which(posts$type==8),]
 
 posts$date = strptime(posts$date, format="%Y-%m-%d")
 
@@ -111,6 +102,8 @@ topicnames = read.table(sprintf("%s/topicnames.csv", base), sep=",", header=F, s
 # Get rid of metric ID column
 impact = impact[,-2]
 colnames(impact) = c("topic_id", "date", "impact")
+# Get rid of first month, so small
+impact = impact[-which(impact$date=="2008-07-31"),]
 impact$date = strptime(impact$date, format="%Y-%m-%d")
 
 
@@ -120,13 +113,13 @@ IDs = unique(impact$topic_id)
 
 for (i in 1:length(IDs)){
     thisID = IDs[i]
-    thisName = topicnames[i,2]
+    thisName = "" # topicnames[i,2]
 
     a = impact[which(impact$topic_id==thisID),]
 
     x = 1:length(a$date)
 
-    pdf(sprintf("./out/impact_%02d.pdf", thisID), width=7, height=5)
+    png(sprintf("../results/60/out/impact_%02d.png", thisID), width=640, height=480)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     plot(c(1, length(a$date)), c(min(a$impact), max(a$impact)), type="n", 
         cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Topic Impact")
