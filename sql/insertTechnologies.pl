@@ -10,10 +10,10 @@ my $dbh = DBI->connect($dsn,'root','') or die "Connection Error: $DBI::errstr\n"
 
 
 
-my @array = ("c#4.0","c#-to-f#","c#3.0","c#2.0","c#-to-vb.net","spec#","visual-c#-express-2010","vb.net-to-c#","c#");
+my @array = ("c#-4.0","c#-5.0", "c#-to-f#","c#-3.0","c#-2.0","c#-to-vb.net","c#-language","visual-c#-express-2010","vb.net-to-c#","c#","c-sharp","c#.net");
 addAssociations("c#-learning", \@array);
 
-@array = ("c++builder","objective-c-blocks","c++","visual-c++","dynamic-c","effective-c++","modern-c++","python-c-api","python-c-extension","c-strings","visual-c++-2010","visual-c++-2008","visual-c++-2005","objective-c-2","objective-c++","visual-c++-2008-express","c++-faq","c-like","c++-cli","turbo-c","c++-standard-library","accelerated-c++","managed-c++","c++0x","c-functions","dev-c++","kr-c","c-with-classes","lua-c++-connection","c");
+@array = ("c++11", "c++-cli", "vc", "c++0x", "cpp", "vc9", "vc6", "c++builder","objective-c-blocks","c++","visual-c++","dynamic-c","effective-c++","modern-c++","python-c-api","python-c-extension","c-strings","visual-c++-2010","visual-c++-2008","visual-c++-2005","objective-c-2","objective-c++","visual-c++-2008-express","c++-faq","c-like","c++-cli","turbo-c","c++-standard-library","accelerated-c++","managed-c++","c++0x","c-functions","dev-c++","kr-c","c-with-classes","lua-c++-connection","c");
 addAssociations("c++-learning", \@array);
 
 @array = ("java-web-start","javacompiler","java-interop","java-api","java-ee-6","java-ee-5","java.util.concurrent","javac","javaagents","javax.script","javax.swing","java-frameworks","javahelp","javabeans","java-libraries","java","javamail","java-web-framework","java-util-scanner","javadoc","javacard","java1.6","java1.4","javasound","java-me","java-io","java-ee","wsdl2java","javafx","javadb","javacc","java-3d","java-2d","java-7","java-6","java-5","java-server","java-applet");
@@ -100,7 +100,7 @@ addAssociations("jquery-web", \@array);
 @array = ("eclipse-api","eclipse-3.5.1","eclipse-plugin","eclipse","eclipse-plugin-dev","hgeclipse","eclipseme","eclipse-templates","eclipse-wtp","blackberry-eclipse-plugin","eclipse-jdt","eclipse-monkey","eclipse-plugins","eclipse-fragment","m2eclipse","myeclipse","maven-eclipse-plugin","eclipselink","eclipse-europa","eclipse-rcp","phpeclipse","cfeclipse","eclipse-rap","eclipse-ecf","eclipse-e4","eclipse-3.6","eclipse-3.5","eclipse-3.4","eclipse-3.3","eclipse-3.2","google-eclipse-plugin","eclipse-pdt","eclipse-pde","eclipse-cdt");
 addAssociations("eclipse", \@array);
 
-@array = ("netbeans","netbeans-plugins","netbeans6.8","netbeans6.7","netbeans6.5","netbeans6.1","netbeans-6.9","netbeans-platform");
+@array = ("netbeans","netbeans-plugins","netbeans-7","netbeans6.8","netbeans6.7","netbeans6.5","netbeans6.1","netbeans-6.9","netbeans-platform");
 addAssociations("netbeans", \@array);
 
 

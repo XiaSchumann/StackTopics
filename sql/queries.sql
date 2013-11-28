@@ -22,6 +22,18 @@ GROUP BY YEAR(DATE), MONTH(DATE);
 
 SELECT SUM(m.POST_COUNT) FROM MONTHS m INTO @NUM_POSTS;
 
+INSERT INTO QBYMONTH
+(
+    `YEAR`, `MONTH`, `POST_COUNT`, `SUM_WEIGHT` 
+)
+SELECT
+    YEAR(th.DATE) as YEAR,
+    MONTH(th.DATE) as MONTH,
+    COUNT(th.POSTTYPE) as POST_COUNT,
+    SUM(th.WEIGHT) as SUM_WEIGHT
+FROM THETA th
+    WHERE th.POSTTYPE=1
+GROUP BY YEAR(DATE), MONTH(DATE);
 
 
 INSERT INTO THETA2
@@ -61,34 +73,6 @@ LINES TERMINATED BY '\n';
 ###########################################################################
 
 ## Remove tags with less than 100 posts
-
-INSERT INTO TAGCOUNT (
-    `TAG_ID`, `COUNT`
-)
-SELECT 
-    pt.TAG_ID,
-    COUNT(pt.TAG_ID) as TagCount
-FROM POSTS_TAGS pt
-GROUP BY pt.TAG_ID
-ORDER BY TagCount DESC;
-
-DELETE t.* FROM TAGS t
-WHERE t.ID IN
-(
-    SELECT tc.TAG_ID
-    FROM TAGCOUNT tc
-    WHERE tc.COUNT <= 100
-);
-
-
-DELETE pt.* FROM POSTS_TAGS pt
-WHERE pt.TAG_ID IN
-(
-    SELECT tc.TAG_ID
-    FROM TAGCOUNT tc
-    WHERE tc.COUNT <= 100
-);
-
 
 ## New (unique) tags per month
 # First, find the first month for each tag...
@@ -141,23 +125,16 @@ LINES TERMINATED BY '\n';
 
 
 ## Topic share:
-INSERT INTO TOPICMETRICS
-(
-    `TOPIC_ID`, `METRIC_ID`, `DATE`, `VALUE`
-)
-SELECT 
-    TOPIC_ID, 
-    1 as MetricID,
-    "0000-00-00" as Date,
-    SUM(WEIGHT)/@NUM_POSTS as Value 
-FROM THETA 
-GROUP BY TOPIC_ID;
 
-# TODO: Add number of posts for each topic, and % Q and % A
-
-SELECT *
-FROM TOPICMETRICS
-WHERE METRIC_ID = 1
+SELECT
+    TOPIC_ID as TopicID, 
+    COUNT(TOPIC_ID) as NumPosts, 
+    SUM(WEIGHT)/@NUM_POSTS as Share,
+    (SELECT COUNT(*) FROM THETA WHERE TOPIC_ID=TopicID AND POSTTYPE=1) as PerQ,
+    (SELECT COUNT(*) FROM THETA WHERE TOPIC_ID=TopicID AND POSTTYPE=2) as PerA
+FROM THETA
+GROUP BY TopicId
+ORDER BY Share
 INTO OUTFILE '/tmp/topicshare.csv'
 FIELDS TERMINATED BY ','
 LINES TERMINATED BY '\n';
@@ -219,6 +196,7 @@ SELECT  *
 FROM    TAGSCORE
 INTO OUTFILE '/tmp/tagscore.csv'
 FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
 LINES TERMINATED BY '\n';
 
 
@@ -254,33 +232,7 @@ LINES TERMINATED BY '\n';
 
 
 
-## Technical Impact
-## For a given technology, topic, and month:
-## For each tag in the technology, what is the sum of tag_scores for that tag
-## and topic?
-
-# TODO:  not done yet. Need to divide the SumWeight by the number of theta score
-# of all the question posts in that month.
-
-INSERT INTO TECHIMPACT
-(
-    `TOPIC_ID`, `TAG_ID`, `YEAR`, `MONTH`, `POST_COUNT`, `SUM_WEIGHT`, `AVG_WEIGHT`
-)
-SELECT 
-    tt.TECHNOLOGY_ID as TechnologyID,
-    th.TOPIC_ID as TopicID,
-    p.DATE as Date,
-    Sum(th.WEIGHT) as SumWeight 
-FROM TECHNOLOGIES_TAGS tt
-JOIN POSTS_TAGS pt 
-    ON pt.TAG_ID = tt.TAG_ID
-JOIN POSTS p 
-    ON p.ID = pt.POST_ID
-JOIN THETA th
-    on th.POST_ID = pt.POST_ID
-GROUP BY TechnologyID, TopicID, Year(Date), Month(Date)
-ORDER BY TechnologyID, TopicID;
-
+## Technical Impact: First run the script sql/techImpact
 
 SELECT *
 FROM TECHIMPACT

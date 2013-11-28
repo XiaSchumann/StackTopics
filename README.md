@@ -113,6 +113,9 @@ Then, run the queries from `sql/queries.sql`. The queries will create a number
 of CSV files.
 
 
+Run sql/topPosts.pl.
+
+
 #### Creating the graphs for the report
 
 - Fig 1: Number of new posts per month.
@@ -135,8 +138,28 @@ of CSV files.
    - 
 - Table 3: Top tags related to each topic
    - tagscore.csv 
-   - 
 
+
+
+
+#### Creating the webpages
+
+./scripts/buildTopicPage.pl \
+../SO/Sep2013/60/analysis/topicshare.csv \
+../SO/Sep2013/60/topics.csv \
+../SO/Sep2013/60/analysis/tagscore.csv \
+../SO/Sep2013/60/analysis/topicimpactbymonth.csv \
+../SO/Sep2013/60/analysis/topposts \
+> ../SO/Sep2013/60/web/posts.html
+
+./scripts/buildTechImpactPage.pl \
+../SO/Sep2013/60/analysis/techimpact.csv \
+> ../SO/Sep2013/60/web/techimpact.html
+
+./scripts/buildTagPage.pl \
+../SO/Sep2013/60/analysis/totaltagcountbytag.csv \
+../SO/Sep2013/60/analysis/totaltagcountbytag.csv \
+> ../SO/Sep2013/60/web/techimpact.html
 
 #### Future work
 
