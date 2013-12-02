@@ -7,6 +7,7 @@
 #file_impact <- args[4]
 #file_toppostsdir <- args[5]
 
+outfile = "results/60/web/posts.html"
 
 file_topicshare="results/60/analysis/topicshare.csv"
 file_topics = "results/60/topics.csv"
@@ -30,7 +31,7 @@ colnames(topics) = c("ID", "Val", "Vocab", "Words", "Phrases")
 tagscore = read.table(file_tagscore, sep=",", header=F, stringsAsFactors=F)
 colnames(tagscore) = c("TopicID", "TagLabel", "TagID", "PostCount", "SumWeight", "AvgWeight")
 
-sink(file="output.html")
+sink(file=outfile)
 
 cat("<html>\n")
 cat("<head></head>\n")
@@ -108,7 +109,7 @@ for (id in unique(topics$ID)){
 
     cat("<td valign=\"top\">\n")
         cat(sprintf("<h5>Impact</h5>\n"))
-        cat(sprintf("<img src=\"results/60/out/impact_%02d.png\"/>\n", id))
+        cat(sprintf("<img src=\"../out/impact_%02d.png\"/>\n", id))
 
     cat("</td>\n")
 

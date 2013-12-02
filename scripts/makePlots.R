@@ -1,5 +1,6 @@
 
-base="../results/60/analysis"
+base="results/60/analysis"
+out= "results/60/out"
 
 ###################################
 ###################################
@@ -61,7 +62,7 @@ df = rbind(type1/1000, type2/1000)
 rownames(df) = c("Questions", "Answers")
 
 
-pdf("./out/post_growth.pdf", width=10, height=5)
+pdf(sprintf("%s/post_growth.pdf", out), width=10, height=5)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     x = barplot(df, ylab="New Posts Added (K)", cex.axis=1.5, cex.lab=1.7, space=.5)
 
@@ -76,7 +77,7 @@ dev.off()
 df[1,] = cumsum(df[1,])
 df[2,] = cumsum(df[2,])
 
-pdf("./out/post_growth_cum.pdf", width=10, height=5)
+pdf(sprintf("%s/post_growth_cum.pdf", out), width=10, height=5)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     plot(c(1, length(dates)), c(min(df[1,]), max(df[2,])), type="n", 
         cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Cumulative Posts (K)")
@@ -119,7 +120,7 @@ for (i in 1:length(IDs)){
 
     x = 1:length(a$date)
 
-    png(sprintf("../results/60/out/impact_%02d.png", thisID), width=640, height=480)
+    png(sprintf("%s/impact_%02d.png", out, thisID), width=640, height=480)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     plot(c(1, length(a$date)), c(min(a$impact), max(a$impact)), type="n", 
         cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Topic Impact")
@@ -135,33 +136,77 @@ for (i in 1:length(IDs)){
 
 
 
-# TODO: below
-
-
-cols=c("black", "black", "black", "grey", "grey", "grey")
-ltys=c(1, 2, 4, 1, 2, 4)
-
-
 ###################################
-pdf("../latex_revision/paper/figures/trends_devplatform.pdf", width=7, height=5)
-rowsToPlot = c(20, 33, 29)
-par(mar=c(5.1, 5.1, 1.1, 1.1))
-plot(range(x), c(0, max(trends[rowsToPlot, colsToPlot])), type="n", 
-       cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Topic Impact")
+###################################
+# TECH IMPACT
+###################################
+###################################
+tech = read.table(sprintf("%s/techimpact.csv", base), sep=",", header=F, stringsAsFactors=F, check.names=F)
+colnames(tech) = c("TechID","TopicID","Year", "Month","PostCount","SumWeight","MonthWeight","AvgWeight")
 
-for (i in 1:length(rowsToPlot)){
-    lines(x, trends[rowsToPlot[i], colsToPlot], type="l", lwd=3.0, col=cols[i], lty=ltys[i])
-}
+tech$Date = sprintf("%s-%s-%s", tech$Year, tech$Month, 1)
+tech$Date = strptime(tech$Date, format="%Y-%m-%d")
 
-atx = seq(1, length(dates), by=2)
-axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+tech = tech[-which(as.character(tech$Date)=="2008-08-01"),]
+tech = tech[-which(as.character(tech$Date)=="2013-09-01"),]
 
-# Manually draw the labels
-text( 5, 2.05, "Java", cex=1.5)
-text(13.3, 2.4, ".NET", cex=1.5)
-text(20, 2.85, "Visual Studio", cex=1.5)
+#+----+----------+----------------------+
+#|  1 |        1 | c#-learning          |
+#|  2 |        1 | c++-learning         |
+#|  3 |        1 | java-learning        |
+#|  4 |        1 | python-learning      |
+#|  5 |        1 | php-learning         |
+#|  6 |        1 | javascript-learning  |
+#|  7 |        2 | oracle               |
+#|  8 |        2 | mysql                |
+#|  9 |        2 | sql-server           |
+#| 10 |        2 | sqlite               |
+#| 11 |        2 | postgresql           |
+#| 12 |        3 | git                  |
+#| 13 |        3 | svn                  |
+#| 14 |        4 | android              |
+#| 15 |        4 | iphone               |
+#| 16 |        4 | blackberry           |
+#| 17 |        4 | windows-phone        |
+#| 18 |        5 | php-scripting        |
+#| 19 |        5 | python-scripting     |
+#| 20 |        5 | perl-scripting       |
+#| 21 |        5 | javascript-scripting |
+#| 22 |        5 | bash-scripting       |
+#| 23 |        6 | javascript-web       |
+#| 24 |        6 | asp.net-web          |
+#| 25 |        6 | php-web              |
+#| 26 |        6 | jquery-web           |
+#| 27 |        7 | eclipse              |
+#| 28 |        7 | netbeans             |
+#+----+----------+----------------------+
 
-dev.off()
+
+# Database platform
+# TODO
+techsToPlot = list()
+techsToPlot[[1]] = c(42, 7, "Oracle", 1, 0.001)
+techsToPlot[[2]] = c(42, 8, "MySQL", 6, 0.008)
+techsToPlot[[3]] = c(42, 9, "SQL-Server", 6, 0.008)
+techsToPlot[[4]] = c(42, 10, "SQLite", 6, 0.008)
+techsToPlot[[5]] = c(42, 11, "PostgreSQL", 6, 0.008)
+
+makeComparePlot(tech, techsToPlot, sprintf("%s/techimpact_databaseplatform.png", out))
+
+# Version Control
+techsToPlot = list()
+techsToPlot[[1]] = c(33, 12, "Git", 1, 0.001)
+techsToPlot[[2]] = c(33, 13, "SVN", 6, 0.008)
+
+makeComparePlot(tech, techsToPlot, sprintf("%s/techimpact_versioncontrol.png", out))
+
+# Mobile Apps
+techsToPlot = list()
+techsToPlot[[1]] = c(41, 14, "Android", 45, 0.017)
+techsToPlot[[2]] = c(41, 15, "iPhone", 40, 0.006)
+techsToPlot[[3]] = c(41, 16, "Blackberry", 30, 0.001)
+
+makeComparePlot(tech, techsToPlot, sprintf("%s/techimpact_mobileapp.png", out))
 
 
 ###################################

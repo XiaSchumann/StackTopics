@@ -140,31 +140,25 @@ Run sql/topPosts.pl.
    - tagscore.csv 
 
 
+###### Building the topic impact charts
+Run scripts/makePlots.R
+
 
 
 #### Creating the webpages
 
-./scripts/buildTopicPage.pl \
-../SO/Sep2013/60/analysis/topicshare.csv \
-../SO/Sep2013/60/topics.csv \
-../SO/Sep2013/60/analysis/tagscore.csv \
-../SO/Sep2013/60/analysis/topicimpactbymonth.csv \
-../SO/Sep2013/60/analysis/topposts \
-> ../SO/Sep2013/60/web/posts.html
+Run ./scripts/buildTopicPage.R. 
 
-./scripts/buildTechImpactPage.pl \
-../SO/Sep2013/60/analysis/techimpact.csv \
-> ../SO/Sep2013/60/web/techimpact.html
+Run ./scripts/buildTechImpactPage.R 
 
-./scripts/buildTagPage.pl \
-../SO/Sep2013/60/analysis/totaltagcountbytag.csv \
-../SO/Sep2013/60/analysis/totaltagcountbytag.csv \
-> ../SO/Sep2013/60/web/techimpact.html
+Run  ./scripts/buildTagPage.R 
+
+
 
 #### Future work
 
 - Better automation of tool set; increased efficiency
-- Using interactive analysis tools to explore trends
+- Using interactive analysis tools to explore results and trends
 - Creating browser for questions/answers: can explore posts via topic, time,
   tag, keyword, etc.
 - Take a post's ViewCount into account
