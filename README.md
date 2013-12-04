@@ -153,6 +153,12 @@ Run ./scripts/buildTechImpactPage.R
 
 Run  ./scripts/buildTagPage.R 
 
+#### Tag Analysis
+./scripts/tagsAndDates.pl \
+../SO/Sep2013/posts-pretmp.csv \
+../SO/Sep2013/posts_tagstmp.csv \
+> ../SO/Sep2013/tagdates.csv
+
 
 
 #### Future work
