@@ -7,9 +7,9 @@
 
 
 cols=c("black", "black", "black", "grey", "grey", "grey")
-ltys=c(1, 2, 4, 1, 2, 4)
+ltys=c(1, 2, 3, 1, 2, 3)
 
-makeComparePlot = function(tech, techsToPlot, fileName){
+makeComparePlot = function(tech, techsToPlot, legendLocation, fileName){
 
 #png(fileName, out), width=640, height=480)
 
@@ -37,15 +37,19 @@ makeComparePlot = function(tech, techsToPlot, fileName){
     atx = seq(1, length(dates), by=2)
     axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 
+
     # Manually draw the labels
+    names = c()
     for (i in 1:length(techsToPlot)){
         thisText = techsToPlot[[i]][3]
-        thisX = as.numeric(techsToPlot[[i]][4])
-        thisY = as.numeric(techsToPlot[[i]][5])
-        text(thisX, thisY, thisText, cex=1.5)
+        #thisX = as.numeric(techsToPlot[[i]][4])
+        #thisY = as.numeric(techsToPlot[[i]][5])
+        #text(thisX, thisY, thisText, cex=1.5)
+        names[i] = thisText
     }
+    legend(legendLocation, legend=names, col=cols, lty=ltys, lwd=3)
 
 #dev.off()
-
+    numbers 
 }
 
