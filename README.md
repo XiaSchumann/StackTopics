@@ -110,38 +110,18 @@ relationships.
 #### Running the analysis queries
 
 Then, run the queries from `sql/queries.sql`. The queries will create a number
-of CSV files.
-
+of CSV files in `/tmp` that should be moved somewhere sane, like
+`results/60/analysis`.
 
 Run sql/topPosts.pl.
 
 
 #### Creating the graphs for the report
 
-- Fig 1: Number of new posts per month.
-   - numpostsbymonth.csv
-   - TODO: which R script?
-- Fig 2a and 2b: New tags created per month.
-   - newtagcountbymonth.csv 
-   - TODO: which R script?
-- Fig 6: Increasing and decreasing trends
-   - topicimpactbymonth.csv 
-   -
-- Fig 7a and 7b: Comparative trend analysis
-   - topicimpactbymonth.csv 
-   - 
-- Fig 8a-f: Focused trend analysis
-   - techimpact.csv
-   - 
-- Table 1: The topics discovered by LDA and Table 2: The topic shares and trends
-   - topicshare.csv
-   - 
-- Table 3: Top tags related to each topic
-   - tagscore.csv 
+In R, source scripts/makePlots.R (which itself sources a few other files) to 
+create the meta plots, impact over time plots, and tech impact over time plots.
 
-
-###### Building the topic impact charts
-Run scripts/makePlots.R
+In R, source 
 
 
 
@@ -149,25 +129,25 @@ Run scripts/makePlots.R
 
 Run ./scripts/buildTopicPage.R. 
 
-Run ./scripts/buildTechImpactPage.R 
+Manually create, in results/60/web, techimpact.html, meta.html, and index.html.
 
-Run  ./scripts/buildTagPage.R 
 
 #### Tag Analysis
+
+First, run 
+
 ./scripts/tagsAndDates.pl \
 ../SO/Sep2013/posts-pretmp.csv \
 ../SO/Sep2013/posts_tagstmp.csv \
 > ../SO/Sep2013/tagdates.csv
 
+Then, in R, source "scripts/analyzeTags.R". This will create plots and
+datafiles.
+
+Then manually create, in results/60/web, tags.html.
 
 
-#### Future work
+#### Other Details and Future work
 
-- Better automation of tool set; increased efficiency
-- Using interactive analysis tools to explore results and trends
-- Creating browser for questions/answers: can explore posts via topic, time,
-  tag, keyword, etc.
-- Take a post's ViewCount into account
-- Take user behavior into account: first, classify a developer as, say, a .net
-  developer. Then see what topics they are interested in.
+See the final report that I typed up for Telerik (in Dropbox).
 

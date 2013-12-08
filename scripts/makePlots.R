@@ -10,24 +10,24 @@ out= "results/60/out"
 ###################################
 ###################################
 
-pdf(sprintf("%s/figures/tag_growth.pdf", out), width=7, height=5)
+png(sprintf("%s/tag_growth.png", out), width=640, height=480)
 par(mar=c(5.1, 5.1, 1.1, 1.1))
 x = barplot(newtagcount$Tags, ylab="New Tags Added", cex.axis=1.2, cex.lab=2.0, space=.5)
 
 # Draw the time labels
-atx = seq(1, length(newtagcount$Month), by=2)
-axis(side=1, at=x[atx], labels=format(newtagcount$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+atx = seq(1, length(newtagcount$Date), by=2)
+axis(side=1, at=x[atx], labels=format(newtagcount$Date[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 dev.off()
 
 
-pdf(sprintf("%s/figures/tag_growth_cumulative.pdf", out), width=7, height=5)
+png(sprintf("%s/tag_growth_cumulative.png", out), width=640, height=480)
 par(mar=c(5.1, 5.1, 1.1, 1.1))
 x = 1:length(newtagcount$Cum)
 plot(x, newtagcount$Cum/1000, type="l", lwd=5.0, xlab="", ylab="Total Tags (K)", xaxt="n", cex.axis=1.2, cex.lab=2.0)
 
 # Draw the time labels
-atx = seq(1, length(newtagcount$Month), by=2)
-axis(side=1, at=x[atx], labels=format(newtagcount$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+atx = seq(1, length(newtagcount$Date), by=2)
+axis(side=1, at=x[atx], labels=format(newtagcount$Date[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 dev.off()
 
 
@@ -46,7 +46,7 @@ type2 = c(posts[which(posts$type==2),]$count)
 df = rbind(type1/1000, type2/1000)
 rownames(df) = c("Questions", "Answers")
 
-pdf(sprintf("%s/post_growth.pdf", out), width=10, height=5)
+png(sprintf("%s/post_growth.png", out), width=640, height=480)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     x = barplot(df, ylab="New Posts Added (K)", cex.axis=1.5, cex.lab=1.7, space=.5)
 
@@ -61,7 +61,7 @@ dev.off()
 df[1,] = cumsum(df[1,])
 df[2,] = cumsum(df[2,])
 
-pdf(sprintf("%s/post_growth_cum.pdf", out), width=10, height=5)
+png(sprintf("%s/post_growth_cum.png", out), width=640, height=480)
     par(mar=c(5.1, 5.1, 1.1, 1.1))
     plot(c(1, length(dates)), c(min(df[1,]), max(df[2,])), type="n", 
         cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Cumulative Posts (K)")

@@ -1,6 +1,4 @@
 
-
-
 source("scripts/loadData.R")
 source("scripts/analyzeTags.functions.R")
 base="results/60/analysis"
@@ -155,7 +153,7 @@ tagcounts = rbind(tagcounts, aggGroups(tagcounts, dates))
 allTelerik = c( 5096, 31219, 28901, 26778, 33766, 26746, 13755, 25381, 20166, 23513, 34315,
 24459, 32782, 26409, 21851, 16966, 18629, 29792, 26569,
 32128, 33118, 32100, 31493, 33517, 29170, 33107, 33920, 31095, 27590, #kendo
-13999, 16547, 26370, 26405, 31249, 24676, 16588, 10434, 19843, #randcontrol
+13999, 16547, 26370, 26405, 31249, 24676, 16588, 10434, 19843, #radcontrol
 5097, 9725, 9727, 9378, 22107, 32939, 30052, 15659, 10434,19843, # radcontrol
 19030,21618, # Just
 32299, #icenium
@@ -176,8 +174,23 @@ allInfragistics = c(1322)
 allComponentOne = c(6767)
 allComponentArt = c(83656)
 allSyncFusion = c(6247)
+allSelenium = c(853,29408,27868,27869,10519,4055,32876,14417,3415,29558,19968,23159)
+allSlickgrid = c(20958)
 
-allAJAX = c(315, 15488, 30518, 13056, 7811, 13056)
+
+allGrid =
+c(423,9850,19378,22982,18749,1227,6212,2658,32093,20476,3400,10357,11000,17523,33255,20400,18895,
+10564,13056,1000,21075,10662,21194,13171,23135,28826,10724,13284,31493,6284,20638,26899,30043,20314,13755,
+10434,19843,20958,4055,32876)
+
+allChart = c(15653,29895, 688, 28082, 13488, 7645, 24760, 13999, 27268, 28901)
+
+allRTB = c(5665,31209,30947,13879,12643,6040,7747,26746,1359,1906,10437,13574,30004,26409)
+
+allAJAX = c(303, 394, 13562,31219,
+31616, 12313, 22530, 8742, 19507, 23248, 17750, 9955, 3874, 9001, 11602, 24595,
+15418, 2861, 14699, 10173, 30854, 21368, 10725, 17420, 20588, 25170, 1304,
+27192)
 
 allWPF = c(315, 15488, 30518, 13056, 7811, 13056)
 
@@ -208,14 +221,34 @@ allLinux = c(64, 10837, 18286, 21969, 8271, 20648, 23088, 30739, 19692, 23326,
 442, 22201, 24179, 25962, 28028, 29458, 30833, 5670, 11750, 13185, 18901, 14907, 32241, 27322,
 31, 6056, 14594, 7670, 13478, 3704)
 
+tagcounts = rbind(tagcounts, aggGroups2("WPF-Suite", dates, allWPF, allWPF))
+tagcounts = rbind(tagcounts, aggGroups2("Silverlight-Suite", dates, allSilverlight, allSilverlight))
+tagcounts = rbind(tagcounts, aggGroups2("WindowsPhone-Suite", dates, allWindowsPhone, allWindowsPhone))
+tagcounts = rbind(tagcounts, aggGroups2("Windows8-Suite", dates, allWindows8, allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("AJAX-Suite", dates, allAJAX, allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("Winforms-Suite", dates, allWinForms, allWinForms))
 
-#tmp = tags[tags$TagID %in% allTelerik,]
-#tmp = tags[tags$TopicID %in% tmp$TopicID & (tags$TagID %in% allWPF),]
+tagcounts = rbind(tagcounts, aggGroups2("Chart-Control", dates, allChart, allChart))
+tagcounts = rbind(tagcounts, aggGroups2("Grid-Control", dates, allGrid, allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("RichTextBox-Control", dates, allRTB, allRTB))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-Company", dates, allTelerik, allTelerik))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-Company", dates, allDevExpress, allDevExpress))
+tagcounts = rbind(tagcounts, aggGroups2("Infragistics-Company", dates, allInfragistics, allInfragistics))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-Company", dates, allXamarin, allXamarin))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-Company", dates, allAppcelerator, allAppcelerator))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-Company", dates, allSencha, allSencha))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-Company", dates, allComponentOne,allComponentOne))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-Company", dates, allComponentArt, allComponentArt))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-Company", dates, allSyncFusion, allSyncFusion))
+
+
 tagcounts = rbind(tagcounts, aggGroups2("Telerik-WPF-Suite", dates, allTelerik, allWPF))
 tagcounts = rbind(tagcounts, aggGroups2("DevExpress-WPF-Suite", dates, allDevExpress,allWPF))
-tagcounts = rbind(tagcounts, aggGroups2("Xamarin-WPF-Suite", tmp, dates, allXamarin,allWPF))
-tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-WPF-Suite", tmp, dates, allAppcelerator,allWPF))
-tagcounts = rbind(tagcounts, aggGroups2("Sencha-WPF-Suite", tmp, dates, allSencha, allWPF))
+tagcounts = rbind(tagcounts, aggGroups2("Infragistics-WPF-Suite", dates, allInfragistics,allWPF))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-WPF-Suite", dates, allXamarin,allWPF))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-WPF-Suite", dates, allAppcelerator,allWPF))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-WPF-Suite", dates, allSencha, allWPF))
 
 tagcounts = rbind(tagcounts, aggGroups2("Telerik-Silverlight-Suite", dates, allTelerik, allSilverlight))
 tagcounts = rbind(tagcounts, aggGroups2("Infragistics-Silverlight-Suite", dates, allInfragistics,allSilverlight))
@@ -228,10 +261,185 @@ tagcounts = rbind(tagcounts, aggGroups2("DevExpress-WindowsPhone-Suite", dates, 
 tagcounts = rbind(tagcounts, aggGroups2("Xamarin-WindowsPhone-Suite", dates, allXamarin,allWindowsPhone))
 tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-WindowsPhone-Suite", dates, allAppcelerator,allWindowsPhone))
 tagcounts = rbind(tagcounts, aggGroups2("Sencha-WindowsPhone-Suite", dates, allSencha, allWindowsPhone))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-WindowsPhone-Suite", dates, allComponentOne,allWindowsPhone))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-WindowsPhone-Suite", dates, allComponentArt,allWindowsPhone))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-WindowsPhone-Suite", dates, allSyncFusion, allWindowsPhone))
 
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-Grid", dates, allTelerik, allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-Grid", dates, allDevExpress,allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-Grid", dates, allXamarin,allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-Grid", dates, allAppcelerator,allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-Grid", dates, allSencha, allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-Grid", dates, allComponentOne,allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-Grid", dates, allComponentArt,allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-Grid", dates, allSyncFusion, allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("Selenium-Grid", dates, allSelenium, allGrid))
+tagcounts = rbind(tagcounts, aggGroups2("Slickgrid-Grid", dates, allSlickgrid, allGrid))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-Winforms-Suite", dates, allTelerik, allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-Winforms-Suite", dates, allDevExpress,allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-Winforms-Suite", dates, allXamarin,allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-Winforms-Suite", dates, allAppcelerator,allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-Winforms-Suite", dates, allSencha, allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-Winforms-Suite", dates, allComponentOne,allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-Winforms-Suite", dates, allComponentArt,allWinForms))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-Winforms-Suite", dates, allSyncFusion, allWinForms))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-Windows8-Suite", dates, allTelerik, allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-Windows8-Suite", dates, allDevExpress,allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-Windows8-Suite", dates, allXamarin,allWindows8)) 
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-Windows8-Suite", dates, allAppcelerator,allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-Windows8-Suite", dates, allSencha, allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-Windows8-Suite", dates, allComponentOne,allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-Windows8-Suite", dates, allComponentArt,allWindows8))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-Windows8-Suite", dates, allSyncFusion, allWindows8))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-AJAX-Suite", dates, allTelerik, allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-AJAX-Suite", dates, allDevExpress,allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-AJAX-Suite", dates, allXamarin,allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-AJAX-Suite", dates, allAppcelerator,allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-AJAX-Suite", dates, allSencha, allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-AJAX-Suite", dates, allComponentOne,allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-AJAX-Suite", dates, allComponentArt,allAJAX))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-AJAX-Suite", dates, allSyncFusion, allAJAX))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-Chart", dates, allTelerik, allChart))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-Chart", dates, allDevExpress,allChart))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-Chart", dates, allXamarin,allChart))
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-Chart", dates, allAppcelerator,allChart))
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-Chart", dates, allSencha, allChart))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-Chart", dates, allComponentOne,allChart))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-Chart", dates, allComponentArt,allChart))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-Chart", dates, allSyncFusion, allChart))
+
+tagcounts = rbind(tagcounts, aggGroups2("Telerik-RTB", dates, allTelerik, allRTB))
+tagcounts = rbind(tagcounts, aggGroups2("DevExpress-RTB", dates, allDevExpress,allRTB))
+tagcounts = rbind(tagcounts, aggGroups2("Xamarin-RTB", dates, allXamarin,allRTB)) 
+tagcounts = rbind(tagcounts, aggGroups2("Appcelerator-RTB", dates, allAppcelerator,allRTB)) 
+tagcounts = rbind(tagcounts, aggGroups2("Sencha-RTB", dates, allSencha, allRTB))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentOne-RTB", dates, allComponentOne,allRTB))
+tagcounts = rbind(tagcounts, aggGroups2("ComponentArt-RTB", dates, allComponentArt,allRTB))
+tagcounts = rbind(tagcounts, aggGroups2("SyncFusion-RTB", dates, allSyncFusion, allRTB))
 
 tagcounts$Count = as.numeric(tagcounts$Count)
+
 makeTagPlots(tagcounts, dates, out)
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_WPF-Suite.png", out), "WPF Suite", c("WPF-Suite"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Silverlight-Suite.png", out), "Silverlight Suite", c("Silverlight-Suite"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_WindowsPhone-Suite.png", out), "WindowsPhone Suite", c("WindowsPhone-Suite"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Windows8-Suite.png", out), "Windows8 Suite", c("Windows8-Suite"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_AJAX-Suite.png", out), "AJAX Suite", c("AJAX-Suite"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Chart-Control.png", out), "Chart-Control", c("Chart-Control"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Grid-Control.png", out), "Grid-Control", c("Grid-Control"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_RichTextBox-Control.png", out), "RichTextBox-Control", c("RichTextBox-Control"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Telerik-Company.png", out), "Telerik-Company", c("Telerik-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_DevExpress-Company.png", out), "DevExpress-Company", c("DevExpress-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Infragistics-Company.png", out), "Infragistics-Company", c("Infragistics-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Xamarin-Company.png", out), "Xamarin-Company", c("Xamarin-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Appcelerator-Company.png", out), "Appcelerator-Company", c("Appcelerator-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_Sencha-Company.png", out), "Sencha-Company", c("Sencha-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_ComponentOne-Company.png", out), "ComponentOne-Company", c("ComponentOne-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_ComponentArt-Company.png", out), "ComponentArt-Company", c("ComponentArt-Company"))
+
+makeComparisonPlot(tagcounts, dates, 
+sprintf("%s/tags_SyncFusion-Company.png", out), "SyncFusion-Company", c("SyncFusion-Company"))
+
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_wpf-suite-by-company.png", out), "WPF
+Suite By Company", 
+    c("Telerik-WPF-Suite", "DevExpress-WPF-Suite", "Infragistics-WPF-Suite"))
+
+makeComparisonPlot(tagcounts, dates,
+sprintf("%s/tags_silverlight-suite-by-company.png",
+out), "Silverlight Suite By Company", 
+    c("Telerik-Silverlight-Suite", "Infragistics-Silverlight-Suite","ComponentOne-Silverlight-Suite",
+"ComponentArt-Silverlight-Suite", "SyncFusion-Silverlight-Suite"))
+
+
+makeComparisonPlot(tagcounts, dates,
+sprintf("%s/tags_windowsphone-suite-by-company.png",
+out), "Windows Phone Suite By Company", 
+    c("Telerik-WindowsPhone-Suite", "DevExpress-WindowsPhone-Suite",
+"Xamarin-WindowsPhone-Suite", "Appcelerator-WindowsPhone-Suite",
+"Sencha-WindowsPhone-Suite","ComponentOne-WindowsPhone-Suite",
+"ComponentArt-WindowsPhone-Suite", "SyncFusion-WindowsPhone-Suite"))
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_grid-by-company.png",
+out), "Grid Control By Company", 
+    c("Telerik-Grid", "DevExpress-Grid", "Xamarin-Grid", "Appcelerator-Grid",
+"Sencha-Grid","ComponentOne-Grid", "ComponentArt-Grid", "SyncFusion-Grid",
+"Selenium-Grid", "Slickgrid-Grid"))
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_winforms-suite-by-company.png",
+out), "Winforms Suite By Company", 
+    c("Telerik-Winforms-Suite", "DevExpress-Winforms-Suite",
+"Xamarin-Winforms-Suite", "Appcelerator-Winforms-Suite",
+"Sencha-Winforms-Suite","ComponentOne-Winforms-Suite",
+"ComponentArt-Winforms-Suite", "SyncFusion-Winforms-Suite"))
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_windows8-suite-by-company.png",
+out), "Windows 8 Suite By Company", 
+    c("Telerik-Windows8-Suite", "DevExpress-Windows8-Suite",
+"Xamarin-Windows8-Suite", "Appcelerator-Windows8-Suite",
+"Sencha-Windows8-Suite","ComponentOne-Windows8-Suite",
+"ComponentArt-Windows8-Suite", "SyncFusion-Windows8-Suite"))
+
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_ajax-suite-by-company.png",
+out), "AJAX Suite By Company", 
+    c("Telerik-AJAX-Suite", "DevExpress-AJAX-Suite",
+"Xamarin-AJAX-Suite", "Appcelerator-AJAX-Suite",
+"Sencha-AJAX-Suite","ComponentOne-AJAX-Suite",
+"ComponentArt-AJAX-Suite", "SyncFusion-AJAX-Suite"))
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_chart-by-company.png",
+out), "Chart Control By Company", 
+    c("Telerik-Chart", "DevExpress-Chart",
+"Xamarin-Chart", "Appcelerator-Chart",
+"Sencha-Chart","ComponentOne-Chart",
+"ComponentArt-Chart", "SyncFusion-Chart"))
+
+makeComparisonPlot(tagcounts, dates, sprintf("%s/tags_rtb-by-company.png",
+out), "RichTextBox Control By Company", 
+    c("Telerik-RTB", "DevExpress-RTB",
+"Xamarin-RTB", "Appcelerator-RTB",
+"Sencha-RTB","ComponentOne-RTB",
+"ComponentArt-RTB", "SyncFusion-RTB"))
+
+
+
 write.table(tagcounts, file=sprintf("%s/tagcounts.csv", base), sep=",", row.names=F, col.names=F)
 
 

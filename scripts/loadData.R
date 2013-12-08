@@ -2,7 +2,7 @@ base="results/60/analysis"
 out= "results/60/out"
 
 file_topicshare="results/60/analysis/topicshare.csv"
-file_topics = "results/60/analysistopics.csv"
+file_topics = "results/60/analysis/topics.csv"
 file_toppostsdir = "results/60/analysis/topposts"
 file_tagscore = "results/60/analysis/tagscore.csv"
 

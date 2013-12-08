@@ -1,4 +1,7 @@
 
+cols=c("black", "black", "black", "grey", "grey", "grey", "blue", "blue", "blue", "red", "red", "red")
+ltys=c(1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3)
+
 counts = function(tags, tagGroup, tagLabel, dates){
 
     tagID = tagnames[which(tagnames$TagLabel==tagLabel),]$TagID
@@ -83,7 +86,7 @@ makeTagPlots = function(tagcounts, dates, out){
         tmp = tmp[1:length(dates),]
 
         x = 1:length(dates)
-        y = tmp$Count
+        y = as.numeric(tmp$Count)
       
         png(sprintf("%s/tags_%s.png", out, thisLabel), width=640, height=480)
             par(mar=c(5.1, 5.1, 1.1, 1.1))
@@ -100,3 +103,54 @@ makeTagPlots = function(tagcounts, dates, out){
     }
 }
             
+makeComparisonPlot = function(tagcounts, dates, file, title, labels){
+
+    dates = strptime(dates, format="%Y-%m-%d")
+
+    # First, find out max
+    maxY = 0
+    for (i in 1:length(labels)){
+        thisLabel = labels[i]
+        tmp = tagcounts[tagcounts$TagLabel==thisLabel,]
+        tmp = tmp[1:length(dates),]
+        maxY = max(maxY, as.numeric(tmp$Count))
+    }
+
+    x = 1:length(dates)
+
+    png(file, width=640, height=480)
+        par(mar=c(5.1, 5.1, 1.1, 1.1))
+        plot(c(1, length(x)), c(0, maxY), type="n", 
+        cex.axis=1.2, cex.lab=2.0, xlab="", xaxt="n", ylab="Tag Count")
+
+        for (i in 1:length(labels)){
+            thisLabel = labels[i]
+
+            tmp = tagcounts[tagcounts$TagLabel==thisLabel,]
+            tmp = tmp[1:length(dates),]
+
+            x = 1:length(dates)
+            y = as.numeric(tmp$Count)
+      
+            lines(x, y, type="l", lwd=3.0, col=cols[i], lty=ltys[i])
+
+        }
+
+        atx = seq(1, length(dates), by=2)
+        axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+
+        legend("topleft", legend=labels, col=cols, lty=ltys, lwd=3)
+
+        title(sprintf("\"%s\"", title ))
+    dev.off()
+}
+
+
+printTagLabels = function(all){
+    for (i in 1:length(all)){ 
+        thisID = all[i];
+        thisLabel = tagnames[which(tagnames$TagID==thisID),]$TagLabel
+        cat(sprintf("[%s], ", thisLabel ))
+    }
+    cat("\n")
+}
