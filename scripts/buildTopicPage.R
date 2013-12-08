@@ -2,7 +2,7 @@
 source("scripts/analyzeTrends.functions.R")
 source("scripts/loadData.R")
 
-outfile = "results/60/web/posts.html"
+outfile = "results/60/web/topics.html"
 sink(file=outfile)
 
 

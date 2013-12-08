@@ -2,7 +2,7 @@ base="results/60/analysis"
 out= "results/60/out"
 
 file_topicshare="results/60/analysis/topicshare.csv"
-file_topics = "results/60/topics.csv"
+file_topics = "results/60/analysistopics.csv"
 file_toppostsdir = "results/60/analysis/topposts"
 file_tagscore = "results/60/analysis/tagscore.csv"
 
@@ -17,13 +17,16 @@ colnames(topics) = c("ID", "Val", "Vocab", "Words", "Phrases")
 tagscore = read.table(file_tagscore, sep=",", header=F, stringsAsFactors=F)
 colnames(tagscore) = c("TopicID", "TagLabel", "TagID", "PostCount", "SumWeight", "AvgWeight")
 
-tags = read.table(sprintf("%s/newtagcountbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
-colnames(tags) = c("Tags", "Year", "Month")
+tagnames = read.table(sprintf("%s/tagstmp.csv", base), sep="|", header=F, stringsAsFactors=F)
+colnames(tagnames) = c("TagID", "TagLabel")
 
-tags$Cum = cumsum(tags$Tags)
+newtagcount = read.table(sprintf("%s/newtagcountbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
+colnames(newtagcount) = c("Tags", "Year", "Month")
 
-tags$Date = sprintf("%d-%02d-01", tags$Year, tags$Month)
-tags$Date = strptime(tags$Date, format="%Y-%m-%d")
+newtagcount$Cum = cumsum(newtagcount$Tags)
+
+newtagcount$Date = sprintf("%d-%02d-01", newtagcount$Year, newtagcount$Month)
+newtagcount$Date = strptime(newtagcount$Date, format="%Y-%m-%d")
 
 posts = read.table(sprintf("%s/numpostsbymonth.csv", base), sep=",", header=F, stringsAsFactors=F)
 colnames(posts) = c("count", "date", "type")

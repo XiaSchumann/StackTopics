@@ -11,7 +11,7 @@ ltys=c(1, 2, 3, 1, 2, 3)
 
 makeComparePlot = function(tech, techsToPlot, legendLocation, fileName){
 
-#png(fileName, out), width=640, height=480)
+png(fileName,  width=640, height=480)
 
     numbers = list()
     for (i in 1:length(techsToPlot)){
@@ -49,7 +49,7 @@ makeComparePlot = function(tech, techsToPlot, legendLocation, fileName){
     }
     legend(legendLocation, legend=names, col=cols, lty=ltys, lwd=3)
 
-#dev.off()
-    numbers 
+    
+dev.off()
 }
 

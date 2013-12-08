@@ -171,16 +171,3 @@ Run  ./scripts/buildTagPage.R
 - Take user behavior into account: first, classify a developer as, say, a .net
   developer. Then see what topics they are interested in.
 
-
-
-
-
-
-
-Dependencies
-============
-
-- Hibernate
-- MALLET
-- lscp
-

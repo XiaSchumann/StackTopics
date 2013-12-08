@@ -12,22 +12,22 @@ out= "results/60/out"
 
 pdf(sprintf("%s/figures/tag_growth.pdf", out), width=7, height=5)
 par(mar=c(5.1, 5.1, 1.1, 1.1))
-x = barplot(tags$Tags, ylab="New Tags Added", cex.axis=1.2, cex.lab=2.0, space=.5)
+x = barplot(newtagcount$Tags, ylab="New Tags Added", cex.axis=1.2, cex.lab=2.0, space=.5)
 
 # Draw the time labels
-atx = seq(1, length(tags$Month), by=2)
-axis(side=1, at=x[atx], labels=format(tags$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+atx = seq(1, length(newtagcount$Month), by=2)
+axis(side=1, at=x[atx], labels=format(newtagcount$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 dev.off()
 
 
 pdf(sprintf("%s/figures/tag_growth_cumulative.pdf", out), width=7, height=5)
 par(mar=c(5.1, 5.1, 1.1, 1.1))
-x = 1:length(tags$Cum)
-plot(x, tags$Cum/1000, type="l", lwd=5.0, xlab="", ylab="Total Tags (K)", xaxt="n", cex.axis=1.2, cex.lab=2.0)
+x = 1:length(newtagcount$Cum)
+plot(x, newtagcount$Cum/1000, type="l", lwd=5.0, xlab="", ylab="Total Tags (K)", xaxt="n", cex.axis=1.2, cex.lab=2.0)
 
 # Draw the time labels
-atx = seq(1, length(tags$Month), by=2)
-axis(side=1, at=x[atx], labels=format(tags$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+atx = seq(1, length(newtagcount$Month), by=2)
+axis(side=1, at=x[atx], labels=format(newtagcount$Month[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
 dev.off()
 
 
@@ -166,7 +166,7 @@ techsToPlot[[4]] = c(35, 4, "Python")
 techsToPlot[[5]] = c(35, 5, "PHP")
 techsToPlot[[6]] = c(35, 6, "Javascript")
 
-makeComparePlot(tech, techsToPlot, "topright", sprintf("%s/techimpact_learning", out))
+makeComparePlot(tech, techsToPlot, "topright", sprintf("%s/techimpact_learning.png", out))
 
 
 # Scripting language
@@ -177,7 +177,7 @@ techsToPlot[[3]] = c(5, 20, "Perl")
 techsToPlot[[4]] = c(5, 21, "Javascript")
 techsToPlot[[5]] = c(5, 22, "Bash")
 
-makeComparePlot(tech, techsToPlot, "topright", sprintf("%s/techimpact_scriptinglanguage", out))
+makeComparePlot(tech, techsToPlot, "topright", sprintf("%s/techimpact_scriptinglanguage.png", out))
 
 # Web
 techsToPlot = list()
@@ -186,5 +186,5 @@ techsToPlot[[2]] = c(24, 24, "ASP.NET")
 techsToPlot[[3]] = c(24, 25, "PHP")
 techsToPlot[[4]] = c(24, 26, "JQuery")
 
-makeComparePlot(tech, techsToPlot, "topleft", sprintf("%s/techimpact_web", out))
+makeComparePlot(tech, techsToPlot, "topleft", sprintf("%s/techimpact_web.png", out))
 
