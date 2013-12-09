@@ -53,6 +53,7 @@ png(sprintf("%s/post_growth.png", out), width=640, height=480)
     # Draw the time labels
     atx = seq(1, length(dates), by=2)
     axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+    legend("topleft", legend=c("Questions", "Answers"), fill=c("#4D4D4D", "#E6E6E6"))
 dev.off()
 
 
@@ -72,6 +73,7 @@ png(sprintf("%s/post_growth_cum.png", out), width=640, height=480)
     # Draw the time labels
     atx = seq(1, length(dates), by=2)
     axis(side=1, at=x[atx], labels=format(dates[atx], "%b\n%Y"), padj=0.5, cex.axis=1.2)
+    legend("topleft", legend=c("Questions", "Answers"), col=c("black", "black"), lty=c(1,2))
 dev.off()
 
 
